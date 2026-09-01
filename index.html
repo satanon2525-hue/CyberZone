@@ -1,0 +1,1051 @@
+<!DOCTYPE html>
+<html lang="th" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>CyberZone Gaming - คาเฟ่เกมสุดคิ้วท์</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Kanit', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            user-select: none;
+        }
+        .mobile-frame {
+            width: 100%;
+            max-width: 420px;
+            height: 100vh;
+            max-height: 880px;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        @media (min-width: 640px) {
+            body {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                min-height: 100vh;
+                padding: 20px;
+            }
+            .mobile-frame {
+                border-radius: 40px;
+            }
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        @keyframes popIn {
+            0% { transform: scale(0.85); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        .animate-pop { animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+    </style>
+</head>
+<body class="p-0 sm:p-4 bg-[#fcf8f2] dark:bg-[#1a1512] text-[#5c4033] dark:text-[#f4ece1] transition-colors duration-300">
+
+    <div class="mobile-frame bg-[#fffdf9] dark:bg-[#241e19] border-0 sm:border-[10px] border-[#e6d7c3] dark:border-[#3a2e26] shadow-xl">
+
+        <!-- Intro / Welcome Auth Screen -->
+        <div id="auth-screen" class="absolute inset-0 bg-[#fdfbf7] dark:bg-[#1a1512] z-[100] flex flex-col justify-between p-5 transition-opacity duration-300 overflow-y-auto no-scrollbar">
+            <div class="text-center space-y-1.5 pt-2">
+                <div class="w-14 h-14 bg-[#faedcd] dark:bg-[#3d3222] rounded-full mx-auto flex items-center justify-center text-2xl shadow-md border border-[#d4a373]/30">🧸</div>
+                <h1 class="text-base font-bold text-[#5c4033] dark:text-[#f4ece1]">CYBER-ZONE GAMING</h1>
+                <p class="text-[10px] text-[#8c6d53] dark:text-[#bda38e]">คาเฟ่เกมมิ่งสุดคิ้วท์ พร้อมเสิร์ฟความสนุกแล้วจ้า 🍪✨</p>
+            </div>
+
+            <div class="space-y-3 my-auto py-1">
+                <div class="bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-2xl p-3.5 shadow-sm space-y-2.5">
+                    <form onsubmit="handleLogin(event)" class="space-y-2 text-xs">
+                        <div>
+                            <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-0.5">Username (ชื่อผู้ใช้)</label>
+                            <input type="text" id="login-username" required placeholder="กรอกชื่อผู้ใช้ของคุณ" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-3 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs focus:outline-none focus:border-[#d4a373]">
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-0.5">Password (รหัสผ่าน)</label>
+                            <input type="password" id="login-password" required placeholder="กรอกรหัสผ่าน" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-3 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs focus:outline-none focus:border-[#d4a373]">
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-[#d4a373] to-[#bc6c25] py-2 rounded-xl font-bold text-white text-xs shadow-md active:scale-95 transition mt-1">เข้าสู่ระบบ ☕</button>
+                    </form>
+
+                    <button onclick="openModal('register-modal')" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] py-2 rounded-xl font-bold text-[#5c4033] dark:text-[#f4ece1] text-xs shadow-sm active:scale-95 transition mt-1">สมัครสมาชิกใหม่ ✨</button>
+                </div>
+
+                <div class="relative flex py-0.5 items-center">
+                    <div class="flex-grow border-t border-[#eae0d0] dark:border-[#3a2e26]"></div>
+                    <span class="flex-shrink mx-2 text-[10px] text-[#a4907c]">หรือเข้าสู่ระบบผ่านช่องทางอื่น</span>
+                    <div class="flex-grow border-t border-[#eae0d0] dark:border-[#3a2e26]"></div>
+                </div>
+
+                <div class="space-y-2">
+                    <button onclick="socialRegister('Facebook')" class="w-full bg-[#1877f2] hover:opacity-95 py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 shadow-sm transition">
+                        <span>📘</span> เข้าสู่ระบบด้วย Facebook
+                    </button>
+                    <button onclick="socialRegister('LINE')" class="w-full bg-[#06c755] hover:opacity-95 py-2.5 rounded-xl text-xs font-bold text-white flex items-center justify-center gap-2 shadow-sm transition">
+                        <span>💬</span> เข้าสู่ระบบด้วย LINE
+                    </button>
+                </div>
+            </div>
+
+            <div class="text-center pb-1">
+                <span class="text-[10px] text-[#a4907c]">CyberZone Cafe & Gaming Space 🧸</span>
+            </div>
+        </div>
+
+        <!-- Status Bar -->
+        <div class="bg-[#f7f0e8] dark:bg-[#2d241e] px-6 py-2 flex justify-between items-center text-[11px] font-medium text-[#8c6d53] dark:text-[#bda38e] z-50 shrink-0 border-b border-[#eae0d0] dark:border-[#3a2e26]">
+            <span id="current-time-bar">10:50</span>
+            <div class="flex items-center space-x-1.5">
+                <span>5G 🧸</span>
+                <span>🔋 98%</span>
+            </div>
+        </div>
+
+        <!-- Header -->
+        <header class="bg-white/90 dark:bg-[#241e19]/90 backdrop-blur-md border-b border-[#eae0d0] dark:border-[#3a2e26] px-4 py-2.5 flex justify-between items-center z-40 shrink-0">
+            <div class="flex items-center space-x-1.5">
+                <span class="text-sm font-bold text-[#6f4e37] dark:text-[#e0a96d] flex items-center gap-1">🧸 CYBER-ZONE</span>
+            </div>
+            <div class="flex items-center space-x-2">
+                <div class="bg-[#fcf5ed] dark:bg-[#2d241e] px-2 py-1 rounded-full border border-[#e6d7c3] dark:border-[#3a2e26] text-xs flex items-center gap-1">
+                    <span>🍪</span>
+                    <span id="user-credit" class="font-bold text-[#b5651d] dark:text-[#e0a96d]">500</span>
+                    <span class="text-[10px] text-[#a4907c]">G</span>
+                </div>
+                <div class="bg-[#fcf5ed] dark:bg-[#2d241e] px-2 py-1 rounded-full border border-[#e6d7c3] dark:border-[#3a2e26] text-xs flex items-center gap-1">
+                    <span>⭐</span>
+                    <span id="user-points" class="font-bold text-[#bc6c25] dark:text-[#e0a96d]">2</span>
+                    <span class="text-[10px] text-[#a4907c]">Pts</span>
+                </div>
+                <button onclick="toggleDarkMode()" class="w-8 h-8 rounded-full bg-[#fcf5ed] dark:bg-[#2d241e] border border-[#e6d7c3] dark:border-[#3a2e26] flex items-center justify-center text-sm shadow-sm active:scale-95 transition" title="สลับโหมด">
+                    <span id="theme-icon">🌙</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main id="app-content" class="flex-grow overflow-y-auto no-scrollbar p-4 space-y-4 pb-20 bg-[#fdfbf7] dark:bg-[#1f1915]">
+            
+            <!-- Tab 1: Home -->
+            <div id="tab-home" class="space-y-4">
+                <div class="relative rounded-2xl overflow-hidden border border-[#eadecd] dark:border-[#3a2e26] p-4 bg-gradient-to-r from-[#faedcd] via-[#fefae0] to-[#e9edc9] dark:from-[#3d3222] dark:via-[#2d2a1b] dark:to-[#2e3322] flex items-center justify-between shadow-sm">
+                    <div class="space-y-1.5 z-10">
+                        <span class="bg-white/80 dark:bg-black/40 text-[#bc6c25] dark:text-[#e0a96d] text-[10px] px-2 py-0.5 rounded-full border border-[#d4a373]/30 font-semibold inline-block">🤎 คาเฟ่เกมมิ่งสุดละมุน</span>
+                        <h1 class="text-base font-bold text-[#5c4033] dark:text-[#f4ece1]">จองเครื่องเกมน่ารักๆ กันเถอะ</h1>
+                        <p class="text-[#8c6d53] dark:text-[#bda38e] text-[11px]">เช็กสถานะและรอบเวลาที่มีคนจองแล้วได้จากหน้าการ์ดเครื่องด้านล่างเลยจ้า</p>
+                    </div>
+                </div>
+
+                <div class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1] flex items-center gap-1.5">🖥️ สถานะเครื่องคอมพิวเตอร์พาสเทล</h2>
+                        <div class="text-[11px] text-[#8c6d53] dark:text-[#bda38e]">ว่าง: <span id="available-count" class="text-[#606c38] dark:text-[#a3be8c] font-bold">8</span> / 12</div>
+                    </div>
+                    <div id="pc-grid" class="grid grid-cols-2 gap-2.5"></div>
+                </div>
+
+                <div id="booking-section" class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
+                    <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1]">💌 ฟอร์มจองคิวเครื่องคอมพิวเตอร์</h2>
+                    <form id="booking-form" onsubmit="handleBooking(event)" class="space-y-2.5 text-xs">
+                        <div>
+                            <label class="block text-[11px] font-medium text-[#7f5539] dark:text-[#d4a373] mb-1">ชื่อผู้ใช้สมาชิก 🐰</label>
+                            <input type="text" id="username" required placeholder="กรอกชื่อสมาชิก" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-3 py-2 text-[#5c4033] dark:text-[#f4ece1] text-xs focus:outline-none focus:border-[#d4a373]">
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-[#7f5539] dark:text-[#d4a373] mb-1">เลือกเครื่องที่ต้องการจอง</label>
+                            <select id="selected-pc" required class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-3 py-2 text-[#5c4033] dark:text-[#f4ece1] text-xs focus:outline-none focus:border-[#d4a373]">
+                                <option value="">-- เลือกเครื่องคอมพิวเตอร์ --</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-[#7f5539] dark:text-[#d4a373] mb-1">เวลาเข้าใช้บริการ ⏰</label>
+                            <select id="booking-time-select" required class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-3 py-2 text-[#5c4033] dark:text-[#f4ece1] text-xs focus:outline-none focus:border-[#d4a373]">
+                                <option value="11:00">11:00 น.</option>
+                                <option value="12:00">12:00 น.</option>
+                                <option value="13:00">13:00 น.</option>
+                                <option value="14:00">14:00 น.</option>
+                                <option value="15:00">15:00 น.</option>
+                                <option value="16:00">16:00 น.</option>
+                                <option value="18:00">18:00 น. (ช่วงพีค)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-medium text-[#7f5539] dark:text-[#d4a373] mb-1">เลือกแพ็กเกจราคา 🧸</label>
+                            <select id="package-price" required class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-3 py-2 text-[#5c4033] dark:text-[#f4ece1] text-xs focus:outline-none focus:border-[#d4a373]">
+                                <option value="50" data-hours="1">1 ชั่วโมง - 50 เครดิต (รับ 15 แต้ม)</option>
+                                <option value="120" data-hours="3">3 ชั่วโมง - 120 เครดิต - คุ้มสุด! (รับ 40 แต้ม)</option>
+                                <option value="200" data-hours="5">5 ชั่วโมง - 200 เครดิต (รับ 70 แต้ม)</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-[#d4a373] to-[#bc6c25] py-2.5 rounded-lg font-bold text-white text-xs hover:opacity-95 transition shadow-sm mt-1">✨ ยืนยันการจองคิว</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Tab 2: Top-Up & Credit -->
+            <div id="tab-topup" class="space-y-4 hidden">
+                <div class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
+                    <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1] flex items-center gap-1.5">💳 เติมเครดิตและแพ็กเกจเติมเวลาพาสเทล</h2>
+                    <p class="text-[11px] text-[#8c6d53] dark:text-[#bda38e]">เติมเครดิต (G) เพื่อใช้จองเครื่องคอมพิวเตอร์และสั่งขนมอร่อยๆ ภายในร้านได้ทันทีจ้า ✨</p>
+                    
+                    <div class="grid grid-cols-2 gap-2.5 pt-1">
+                        <div onclick="topUpCredit(50, 50)" class="bg-[#fdfbf7] dark:bg-[#1a1512] p-3 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] text-center cursor-pointer active:scale-95 transition hover:border-[#bc6c25]">
+                            <span class="text-xl">🪙</span>
+                            <div class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">50 เครดิต</div>
+                            <div class="text-[10px] text-[#bc6c25] dark:text-[#e0a96d] font-semibold mt-0.5">ราคา 50 บาท</div>
+                        </div>
+                        <div onclick="topUpCredit(120, 100)" class="bg-[#fdfbf7] dark:bg-[#1a1512] p-3 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] text-center cursor-pointer active:scale-95 transition hover:border-[#bc6c25] relative">
+                            <span class="absolute -top-2 right-2 bg-[#bc6c25] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">คุ้มสุด</span>
+                            <span class="text-xl">💰</span>
+                            <div class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">120 เครดิต</div>
+                            <div class="text-[10px] text-[#bc6c25] dark:text-[#e0a96d] font-semibold mt-0.5">ราคา 100 บาท</div>
+                        </div>
+                        <div onclick="topUpCredit(300, 250)" class="bg-[#fdfbf7] dark:bg-[#1a1512] p-3 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] text-center cursor-pointer active:scale-95 transition hover:border-[#bc6c25]">
+                            <span class="text-xl">💎</span>
+                            <div class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">300 เครดิต</div>
+                            <div class="text-[10px] text-[#bc6c25] dark:text-[#e0a96d] font-semibold mt-0.5">ราคา 250 บาท</div>
+                        </div>
+                        <div onclick="topUpCredit(700, 500)" class="bg-[#fdfbf7] dark:bg-[#1a1512] p-3 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] text-center cursor-pointer active:scale-95 transition hover:border-[#bc6c25] relative">
+                            <span class="absolute -top-2 right-2 bg-[#606c38] text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">ยอดฮิต</span>
+                            <span class="text-xl">👑</span>
+                            <div class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">700 เครดิต</div>
+                            <div class="text-[10px] text-[#bc6c25] dark:text-[#e0a96d] font-semibold mt-0.5">ราคา 500 บาท</div>
+                        </div>
+                    </div>
+
+                    <div class="pt-3 border-t border-[#eae0d0] dark:border-[#3a2e26] space-y-2">
+                        <h3 class="text-xs font-bold text-[#5c4033] dark:text-[#f4ece1]">⚡ เติมเงินผ่าน QR PromptPay (จำลองระบบ)</h3>
+                        <div class="flex gap-2">
+                            <input type="number" id="custom-topup-amount" placeholder="ระบุจำนวนเงิน (บาท)" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-3 py-2 text-[#5c4033] dark:text-[#f4ece1] text-xs">
+                            <button onclick="handleCustomTopUp()" class="bg-gradient-to-r from-[#d4a373] to-[#bc6c25] px-4 py-2 rounded-lg font-bold text-white text-xs shrink-0 shadow-sm">เติมเงิน ✨</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 3: Shop & Food -->
+            <div id="tab-shop" class="space-y-4 hidden">
+                <div class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
+                    <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1] flex items-center gap-1.5">🥞 สั่งขนมและเครื่องดื่มเสิร์ฟถึงโต๊ะ</h2>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] flex flex-col justify-between">
+                            <div>
+                                <span class="text-xl">☕</span>
+                                <h3 class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">Caramel Latte</h3>
+                                <p class="text-[10px] text-[#a4907c]">หอมหวานกลมกล่อมตาสว่าง (+10 แต้ม)</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] text-xs font-bold">35 G</span>
+                                <button onclick="orderFood('Caramel Latte', 35, 10)" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] hover:bg-[#fefae0] text-[10px] px-2.5 py-1 rounded-md font-medium transition">สั่งเลย 🧁</button>
+                            </div>
+                        </div>
+                        <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] flex flex-col justify-between">
+                            <div>
+                                <span class="text-xl">🥞</span>
+                                <h3 class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">แพนเค้กน้ำผึ้ง</h3>
+                                <p class="text-[10px] text-[#a4907c]">นุ่มฟูละมุนลิ้นยามเล่นเกม (+12 แต้ม)</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] text-xs font-bold">45 G</span>
+                                <button onclick="orderFood('แพนเค้กน้ำผึ้ง', 45, 12)" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] hover:bg-[#fefae0] text-[10px] px-2.5 py-1 rounded-md font-medium transition">สั่งเลย 🧁</button>
+                            </div>
+                        </div>
+                        <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] flex flex-col justify-between">
+                            <div>
+                                <span class="text-xl">🍪</span>
+                                <h3 class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">คุ้กกี้ช็อกโกแลต</h3>
+                                <p class="text-[10px] text-[#a4907c]">กรุบกรอบเคี้ยวมันเพลินๆ (+15 แต้ม)</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] text-xs font-bold">50 G</span>
+                                <button onclick="orderFood('คุ้กกี้ช็อกโกแลต', 50, 15)" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] hover:bg-[#fefae0] text-[10px] px-2.5 py-1 rounded-md font-medium transition">สั่งเลย 🧁</button>
+                            </div>
+                        </div>
+                        <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] flex flex-col justify-between">
+                            <div>
+                                <span class="text-xl">🧋</span>
+                                <h3 class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">ชานมไข่มุกหนึบหนับ</h3>
+                                <p class="text-[10px] text-[#a4907c]">หวานน้อยอร่อยชื่นใจ (+12 แต้ม)</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] text-xs font-bold">45 G</span>
+                                <button onclick="orderFood('ชานมไข่มุกหนึบหนับ', 45, 12)" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] hover:bg-[#fefae0] text-[10px] px-2.5 py-1 rounded-md font-medium transition">สั่งเลย 🧁</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 4: Gamer Profile Posting Board -->
+            <div id="tab-match" class="space-y-4 hidden">
+                <div class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1] flex items-center gap-1.5">🧸 บอร์ดโพสต์โปรไฟล์เกมเมอร์</h2>
+                        <span class="text-[10px] bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] px-2 py-0.5 rounded-full font-bold">แชร์สายการเล่น</span>
+                    </div>
+                    <p class="text-[11px] text-[#8c6d53] dark:text-[#bda38e]">โพสต์โปรไฟล์ของคุณว่าเล่นเกมอะไรและอยู่สายไหน เพื่อให้เพื่อนๆ ในร้านกดทักมาจอยตี้กันได้เลยจ้า!</p>
+                    
+                    <form onsubmit="handlePostProfile(event)" class="space-y-2.5 bg-[#fdfbf7] dark:bg-[#1a1512] p-3 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26]">
+                        <h3 class="text-xs font-bold text-[#5c4033] dark:text-[#f4ece1]">✨ สร้างโพสต์โปรไฟล์ของคุณ</h3>
+                        <div class="grid grid-cols-2 gap-2 text-xs">
+                            <div>
+                                <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-1">เลือกเกมหลัก</label>
+                                <select id="post-game" required class="w-full bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2.5 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs">
+                                    <option value="Valorant">Valorant (พาสเทลยิงสนั่น)</option>
+                                    <option value="Overcooked">Overcooked (ช่วยกันทำอาหาร)</option>
+                                    <option value="RoV">RoV (แท็กทีมดันป้อม)</option>
+                                    <option value="Co-op Dating">เกมเดตติ้งสอดแนมหัวใจ</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-1">สไตล์การเล่นของคุณ</label>
+                                <select id="post-style" required class="w-full bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2.5 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs">
+                                    <option value="สายซัพพอร์ตใจดี 💖">สายซัพพอร์ตใจดี 💖</option>
+                                    <option value="สายฮาเน้นเอ็นเตอร์เทน 😄">สายฮาเน้นเอ็นเตอร์เทน 😄</option>
+                                    <option value="สายแบกจริงจังแรงค์พุ่ง 🚀">สายแบกจริงจังแรงค์พุ่ง 🚀</option>
+                                    <option value="สายฟาร์มชิลๆ เรื่อยเปื่อย 🍃">สายฟาร์มชิลๆ เรื่อยเปื่อย 🍃</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-1">ข้อความแนะนำตัว / โค้ดชวนเล่น</label>
+                            <input type="text" id="post-bio" required placeholder="เช่น หาตี้ขำๆ ไม่ซีเรียส ทักมาได้เลยจ้า!" class="w-full bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2.5 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs">
+                        </div>
+                        <button type="submit" class="w-full bg-gradient-to-r from-[#d4a373] to-[#bc6c25] py-2 rounded-xl text-white font-bold text-xs shadow-sm active:scale-95 transition">📢 โพสต์โปรไฟล์ลงบอร์ดร้าน</button>
+                    </form>
+
+                    <div class="pt-2">
+                        <div class="flex justify-between items-center mb-2">
+                            <h3 class="text-xs font-bold text-[#5c4033] dark:text-[#f4ece1]">🌟 ฟีดโพสต์โปรไฟล์เกมเมอร์ทั้งหมด:</h3>
+                            <select id="filter-game" onchange="renderProfileFeed()" class="bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2 py-1 text-[10px] text-[#5c4033] dark:text-[#f4ece1]">
+                                <option value="All">แสดงทุกเกม</option>
+                                <option value="Valorant">Valorant</option>
+                                <option value="Overcooked">Overcooked</option>
+                                <option value="RoV">RoV</option>
+                                <option value="Co-op Dating">Co-op Dating</option>
+                            </select>
+                        </div>
+                        <div id="profile-feed-list" class="space-y-2"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 5: Queue -->
+            <div id="tab-queue" class="space-y-4 hidden">
+                <div class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
+                    <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1]">⏳ คิวการจองและเวลาที่ต้องไปรับเครื่อง 🧸</h2>
+                    <div id="active-queue-list" class="space-y-2">
+                        <p class="text-xs text-[#a4907c] text-center py-6">ยังไม่มีการจองคิวในขณะนี้จ้า 🍃</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab 6: Profile & Reward Store -->
+            <div id="tab-profile" class="space-y-4 hidden">
+                <div class="bg-white dark:bg-[#241e19] rounded-2xl p-5 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm text-center space-y-3">
+                    <div class="w-16 h-16 bg-[#faedcd] dark:bg-[#3d3222] rounded-full mx-auto flex items-center justify-center text-2xl font-bold text-[#bc6c25] dark:text-[#e0a96d] shadow-inner border border-[#d4a373]/30" id="profile-initial">🐰</div>
+                    <div>
+                        <h3 class="font-bold text-[#5c4033] dark:text-[#f4ece1] text-sm" id="profile-username">Gamer_Pro99</h3>
+                        <p class="text-[11px] text-[#a4907c]">สถานะสมาชิก: <span id="profile-status" class="text-[#606c38] dark:text-[#a3be8c] font-semibold">ล็อกอินแล้วน่ารักๆ 🍩</span></p>
+                    </div>
+                    <div class="flex justify-center gap-4 text-xs bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26]">
+                        <div>เครดิตคงเหลือ: <span id="profile-credit-val" class="font-bold text-[#bc6c25]">500</span> G</div>
+                        <div>แต้มสะสม: <span id="profile-point-val" class="font-bold text-[#bc6c25]">2</span> Pts</div>
+                    </div>
+                    <button onclick="logout()" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] hover:bg-[#fcf5ed] border border-[#e6d7c3] dark:border-[#3a2e26] py-2 rounded-xl text-xs font-medium text-[#bc6c25] dark:text-[#e0a96d] transition">ออกจากระบบ 🚪</button>
+                </div>
+
+                <div class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1] flex items-center gap-1.5">🎁 ร้านค้าแลกแต้มสะสม (Reward Store)</h2>
+                        <span class="text-[10px] text-[#8c6d53] dark:text-[#bda38e]">สะสมแต้มจากการเล่นและสั่งขนม</span>
+                    </div>
+                    <div class="grid grid-cols-2 gap-2.5">
+                        <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] flex flex-col justify-between">
+                            <div>
+                                <span class="text-xl">💡</span>
+                                <h3 class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">โคมไฟแมวเหมียวพาสเทล</h3>
+                                <p class="text-[10px] text-[#a4907c]">ตกแต่งห้องนอนหรือโต๊ะคอมสุดคิ้วท์</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] text-xs font-bold">100 Pts</span>
+                                <button onclick="redeemReward('โคมไฟแมวเหมียวพาสเทล', 100)" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] hover:bg-[#fefae0] text-[10px] px-2.5 py-1 rounded-md font-medium transition">แลกของรางวัล 🌟</button>
+                            </div>
+                        </div>
+                        <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] flex flex-col justify-between">
+                            <div>
+                                <span class="text-xl">💺</span>
+                                <h3 class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">เก้าอี้เกมเมอร์สีชมพู</h3>
+                                <p class="text-[10px] text-[#a4907c]">ไอเทมแต่งห้องในฝันสุดนุ่มฟู</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] text-xs font-bold">300 Pts</span>
+                                <button onclick="redeemReward('เก้าอี้เกมเมอร์สีชมพู', 300)" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] hover:bg-[#fefae0] text-[10px] px-2.5 py-1 rounded-md font-medium transition">แลกของรางวัล 🌟</button>
+                            </div>
+                        </div>
+                        <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] flex flex-col justify-between">
+                            <div>
+                                <span class="text-xl">🎟️</span>
+                                <h3 class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">คูปองส่วนลดเล่นเกม 1 ชม.</h3>
+                                <p class="text-[10px] text-[#a4907c]">ใช้เล่นคอมฟรีครั้งถัดไปในร้าน</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] text-xs font-bold">80 Pts</span>
+                                <button onclick="redeemReward('คูปองส่วนลดเล่นเกม 1 ชม.', 80)" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] hover:bg-[#fefae0] text-[10px] px-2.5 py-1 rounded-md font-medium transition">แลกของรางวัล 🌟</button>
+                            </div>
+                        </div>
+                        <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] flex flex-col justify-between">
+                            <div>
+                                <span class="text-xl">☕</span>
+                                <h3 class="font-bold text-xs text-[#5c4033] dark:text-[#f4ece1] mt-1">คูปองเครื่องดื่มฟรี 1 แก้ว</h3>
+                                <p class="text-[10px] text-[#a4907c]">แลกรับเมนูโปรดแก้วไหนก็ได้ในร้าน</p>
+                            </div>
+                            <div class="flex justify-between items-center mt-3">
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] text-xs font-bold">60 Pts</span>
+                                <button onclick="redeemReward('คูปองเครื่องดื่มฟรี 1 แก้ว', 60)" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] hover:bg-[#fefae0] text-[10px] px-2.5 py-1 rounded-md font-medium transition">แลกของรางวัล 🌟</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+
+        <!-- Navigation Bar -->
+        <nav class="bg-white/90 dark:bg-[#241e19]/90 backdrop-blur-md border-t border-[#eae0d0] dark:border-[#3a2e26] px-1 py-2 flex justify-around items-center z-50 shrink-0">
+            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-[#bc6c25] dark:text-[#e0a96d] transition">
+                <span class="text-base">🏡</span>
+                <span class="text-[8px] font-medium mt-0.5">หน้าแรก</span>
+            </button>
+            <button onclick="switchTab('topup')" id="nav-topup" class="flex flex-col items-center text-[#a4907c] hover:text-[#5c4033] dark:hover:text-white transition">
+                <span class="text-base">💳</span>
+                <span class="text-[8px] font-medium mt-0.5">เติมเงิน</span>
+            </button>
+            <button onclick="switchTab('shop')" id="nav-shop" class="flex flex-col items-center text-[#a4907c] hover:text-[#5c4033] dark:hover:text-white transition">
+                <span class="text-base">🥞</span>
+                <span class="text-[8px] font-medium mt-0.5">สั่งขนม</span>
+            </button>
+            <button onclick="switchTab('match')" id="nav-match" class="flex flex-col items-center text-[#a4907c] hover:text-[#5c4033] dark:hover:text-white transition">
+                <span class="text-base">🧸</span>
+                <span class="text-[8px] font-medium mt-0.5">โพสต์โปรไฟล์</span>
+            </button>
+            <button onclick="switchTab('queue')" id="nav-queue" class="flex flex-col items-center text-[#a4907c] hover:text-[#5c4033] dark:hover:text-white transition">
+                <span class="text-base">⏳</span>
+                <span class="text-[8px] font-medium mt-0.5">คิวของฉัน</span>
+            </button>
+            <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center text-[#a4907c] hover:text-[#5c4033] dark:hover:text-white transition">
+                <span class="text-base">⭐</span>
+                <span class="text-[8px] font-medium mt-0.5">โปรไฟล์</span>
+            </button>
+        </nav>
+
+        <div class="bg-white dark:bg-[#241e19] pb-1 pt-0.5 flex justify-center shrink-0">
+            <div class="w-32 h-1 bg-[#e6d7c3] dark:bg-[#3a2e26] rounded-full"></div>
+        </div>
+
+    </div>
+
+    <!-- Modals -->
+    <div id="success-popup" class="fixed inset-0 bg-[#5c4033]/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-2xl p-5 max-w-xs w-full text-center space-y-3 animate-pop shadow-lg">
+            <div id="popup-icon" class="w-12 h-12 bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] rounded-full flex items-center justify-center mx-auto text-xl font-bold border border-[#d4a373]/30">🎉</div>
+            <h2 id="success-popup-title" class="text-base font-bold text-[#5c4033] dark:text-[#f4ece1]">เย้! สำเร็จแล้วค่า</h2>
+            <p id="success-popup-msg" class="text-[#8c6d53] dark:text-[#bda38e] text-[11px]">ดำเนินการเรียบร้อยน่ารักสุดๆ</p>
+            <button onclick="closeSuccessPopup()" class="w-full bg-gradient-to-r from-[#d4a373] to-[#bc6c25] py-2 rounded-lg font-bold text-white text-xs shadow-sm">ตกลง 💖</button>
+        </div>
+    </div>
+
+    <!-- Chat Modal -->
+    <div id="chat-modal" class="fixed inset-0 bg-[#5c4033]/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-2xl w-full max-w-xs h-[420px] flex flex-col shadow-lg animate-pop overflow-hidden">
+            <div class="bg-[#faedcd] dark:bg-[#3d3222] p-3 border-b border-[#e6d7c3] dark:border-[#3a2e26] flex justify-between items-center shrink-0">
+                <div class="flex items-center space-x-2">
+                    <span class="text-lg">💬</span>
+                    <div>
+                        <h3 id="chat-buddy-name" class="text-xs font-bold text-[#5c4033] dark:text-[#f4ece1]">แชทกับเกมเมอร์</h3>
+                        <p class="text-[9px] text-[#bc6c25] dark:text-[#e0a96d]">🟢 ออนไลน์ในร้าน</p>
+                    </div>
+                </div>
+                <button onclick="closeModal('chat-modal')" class="text-[#a4907c] hover:text-[#5c4033] dark:hover:text-white text-lg font-bold">&times;</button>
+            </div>
+            <div id="chat-messages" class="flex-grow p-3 overflow-y-auto space-y-2 text-xs bg-[#fdfbf7] dark:bg-[#1a1512]">
+                <div class="text-center text-[10px] text-[#a4907c] my-1">- เริ่มต้นทักทายพูดคุยกับเพื่อนใหม่ -</div>
+            </div>
+            <div class="p-2.5 bg-white dark:bg-[#241e19] border-t border-[#eae0d0] dark:border-[#3a2e26] flex gap-1.5 shrink-0">
+                <input type="text" id="chat-input" placeholder="พิมพ์ข้อความทักทาย..." class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2.5 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs focus:outline-none focus:border-[#d4a373]" onkeypress="handleChatKeyPress(event)">
+                <button onclick="sendChatMessage()" class="bg-gradient-to-r from-[#d4a373] to-[#bc6c25] px-3 py-1.5 rounded-lg text-white font-bold text-xs shrink-0 shadow-sm">ส่ง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Overlap Warning Modal -->
+    <div id="overlap-popup" class="fixed inset-0 bg-[#5c4033]/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-2xl p-5 max-w-xs w-full text-center space-y-3 animate-pop shadow-lg">
+            <div class="w-12 h-12 bg-[#fefae0] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] rounded-full flex items-center justify-center mx-auto text-xl font-bold border border-[#d4a373]/30">⚠️</div>
+            <h2 class="text-base font-bold text-[#5c4033] dark:text-[#f4ece1]">แจ้งเตือนการจองซ้อนทับ</h2>
+            <p id="overlap-popup-msg" class="text-[#8c6d53] dark:text-[#bda38e] text-[11px]">เครื่องนี้มีผู้จองรอบเวลานี้ไปแล้ว กรุณาเลือกเวลาอื่นหรือเปลี่ยนเครื่องจ้า!</p>
+            <button onclick="closeModal('overlap-popup')" class="w-full bg-gradient-to-r from-[#d4a373] to-[#bc6c25] py-2 rounded-lg font-bold text-white text-xs shadow-sm">เข้าใจแล้ว 🤎</button>
+        </div>
+    </div>
+
+    <div id="spec-modal" class="fixed inset-0 bg-[#5c4033]/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-2xl p-4 max-w-xs w-full space-y-3 animate-pop shadow-lg">
+            <div class="flex justify-between items-center border-b border-[#eae0d0] dark:border-[#3a2e26] pb-2">
+                <h3 id="spec-modal-title" class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1]">🖥️ สเปกคอมพิวเตอร์พาสเทล</h3>
+                <button onclick="closeModal('spec-modal')" class="text-[#a4907c] hover:text-[#5c4033] dark:hover:text-white text-xl font-bold">&times;</button>
+            </div>
+            <div id="modal-pc-status-badge" class="text-center py-1.5 px-2 rounded-lg text-xs font-bold"></div>
+            
+            <div class="space-y-2 text-[11px]">
+                <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2 rounded-lg border border-[#e6d7c3] dark:border-[#3a2e26]">
+                    <span class="text-[#bc6c25] dark:text-[#e0a96d] font-semibold block">🎮 GPU (การ์ดจอ)</span>
+                    <span id="spec-gpu" class="text-[#5c4033] dark:text-[#f4ece1]">-</span>
+                </div>
+                <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2 rounded-lg border border-[#e6d7c3] dark:border-[#3a2e26]">
+                    <span class="text-[#7f5539] dark:text-[#d4a373] font-semibold block">⚙️ CPU (หน่วยประมวลผล)</span>
+                    <span id="spec-cpu" class="text-[#5c4033] dark:text-[#f4ece1]">-</span>
+                </div>
+                <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2 rounded-lg border border-[#e6d7c3] dark:border-[#3a2e26]">
+                    <span class="text-[#a4907c] font-semibold block">🧠 RAM (หน่วยความจำ)</span>
+                    <span id="spec-ram" class="text-[#5c4033] dark:text-[#f4ece1]">-</span>
+                </div>
+                <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2 rounded-lg border border-[#e6d7c3] dark:border-[#3a2e26]">
+                    <span class="text-[#606c38] dark:text-[#a3be8c] font-semibold block">🖥️ Monitor (จอแสดงผล)</span>
+                    <span id="spec-monitor" class="text-[#5c4033] dark:text-[#f4ece1]">-</span>
+                </div>
+            </div>
+            <div class="space-y-1.5 pt-1">
+                <button id="modal-select-btn" onclick="" class="w-full bg-gradient-to-r from-[#d4a373] to-[#bc6c25] py-2 rounded-lg font-bold text-white text-xs shadow-sm">⚡ จองเครื่องนี้เลยน่ารัก!</button>
+                <button onclick="closeModal('spec-modal')" class="w-full bg-[#f4ece1] dark:bg-[#3d3222] py-1.5 rounded-lg text-[#7f5539] dark:text-[#bda38e] text-[11px]">ปิดหน้าต่าง</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Register Modal with SMS Verification -->
+    <div id="register-modal" class="fixed inset-0 bg-[#5c4033]/30 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
+        <div class="bg-white dark:bg-[#241e19] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-2xl p-4 w-full max-w-xs space-y-3 shadow-lg max-h-[90vh] overflow-y-auto no-scrollbar">
+            <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1]">✨ สมัครสมาชิกใหม่ (ยืนยันเบอร์โทรศัพท์)</h2>
+
+            <form onsubmit="handleRegister(event)" class="space-y-2.5 text-xs">
+                <div>
+                    <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-0.5">Username (ชื่อผู้ใช้)</label>
+                    <input type="text" id="reg-username" required placeholder="ตั้งชื่อผู้ใช้" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2.5 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-0.5">Password (รหัสผ่าน)</label>
+                    <input type="password" id="reg-password" required placeholder="ตั้งรหัสผ่าน" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2.5 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs">
+                </div>
+                <div>
+                    <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-0.5">เบอร์โทรศัพท์มือถือ 📱</label>
+                    <div class="flex gap-1.5">
+                        <input type="tel" id="reg-phone" required placeholder="0891234567" maxlength="10" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2.5 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs">
+                        <button type="button" onclick="sendSMSOTP()" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] px-3 py-1.5 rounded-lg font-bold text-[10px] shrink-0 border border-[#d4a373]/30 hover:bg-[#fefae0] transition">ส่ง SMS</button>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-[10px] text-[#8c6d53] dark:text-[#bda38e] mb-0.5">รหัสยืนยัน SMS (OTP) 💬</label>
+                    <input type="text" id="reg-otp" required placeholder="กรอกรหัส 6 หลัก" maxlength="6" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] border border-[#e6d7c3] dark:border-[#3a2e26] rounded-lg px-2.5 py-1.5 text-[#5c4033] dark:text-[#f4ece1] text-xs">
+                </div>
+                <div class="flex justify-end space-x-2 pt-1">
+                    <button type="button" onclick="closeModal('register-modal')" class="px-2.5 py-1.5 bg-[#f4ece1] dark:bg-[#3d3222] rounded-lg text-[11px] text-[#7f5539] dark:text-[#bda38e]">ยกเลิก</button>
+                    <button type="submit" class="px-3 py-1.5 bg-gradient-to-r from-[#d4a373] to-[#bc6c25] rounded-lg text-[11px] font-bold text-white shadow-sm">ยืนยันสมัคร 🧸</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script -->
+    <script>
+        let userCredit = 500;
+        let userPoints = 2; 
+        let currentUser = 'Gamer_Pro99';
+        let currentTimeSeconds = 10 * 3600 + 50 * 60; 
+        let generatedOtp = '';
+
+        let pcs = [
+            { id: 1, name: 'PC-01 🧸', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 4090 24GB', cpu: 'Core i9-14900KS', ram: '64GB DDR5', monitor: 'ASUS 360Hz' } },
+            { id: 2, name: 'PC-02 🐰', maxHp: 7200, timeLeft: 3500, status: 'busy', specs: { gpu: 'RTX 4090 24GB', cpu: 'Core i9-14900KS', ram: '64GB DDR5', monitor: 'ASUS 360Hz' } },
+            { id: 3, name: 'PC-03 🐱', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 4080 Super', cpu: 'Ryzen 7 7800X3D', ram: '32GB DDR5', monitor: 'Gigabyte 170Hz' } },
+            { id: 4, name: 'PC-04 🐼', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 4080 Super', cpu: 'Ryzen 7 7800X3D', ram: '32GB DDR5', monitor: 'Gigabyte 170Hz' } },
+            { id: 5, name: 'PC-05 🦊', maxHp: 10800, timeLeft: 4200, status: 'busy', specs: { gpu: 'RTX 4070 Ti 12GB', cpu: 'Core i7-13700K', ram: '32GB DDR4', monitor: 'Acer 144Hz' } },
+            { id: 6, name: 'PC-06 🐨', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 4070 Ti 12GB', cpu: 'Core i7-13700K', ram: '32GB DDR4', monitor: 'Acer 144Hz' } },
+            { id: 7, name: 'PC-07 🦁', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 3060 12GB', cpu: 'Core i5-12400F', ram: '16GB DDR4', monitor: 'AOC 144Hz' } },
+            { id: 8, name: 'PC-08 🐯', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 3060 12GB', cpu: 'Core i5-12400F', ram: '16GB DDR4', monitor: 'AOC 144Hz' } },
+        ];
+
+        let activeBookings = [
+            { pcId: 2, username: 'Gamer_Pro99', pcName: 'PC-02 🐰', timeStr: '12:00', targetSeconds: 12 * 3600, packageHours: 2, packagePrice: 100, earnedPoints: 30 }
+        ];
+
+        let gamerProfiles = [
+            { id: 1, author: 'Mimi_Cute', game: 'Valorant', style: 'สายซัพพอร์ตใจดี 💖', bio: 'เล่นเก่งไม่เน้น เน้นปาหัวใจใส่เพื่อนร่วมทีม ใครสนใจมาจอยกันได้น้า 🧸' },
+            { id: 2, author: 'Boss_Gamer', game: 'Overcooked', style: 'สายแบกจริงจังแรงค์พุ่ง 🚀', bio: 'ครัวไม่ไหม้ไม่เลิกเล่น! ใครมือไวใจนิ่งมารวมกันตรงนี้ 🍳' },
+            { id: 3, author: 'Nong_Pang', game: 'Valorant', style: 'สายฮาเน้นเอ็นเตอร์เทน 😄', bio: 'ยิงโดนบ้างไม่โดนบ้าง แต่เสียงหัวเราะมาเต็มแน่นอน มาจอยกันจ้า' },
+            { id: 4, author: 'Sugar_Bear', game: 'RoV', style: 'สายซัพพอร์ตใจดี 💖', bio: 'เมจ/แทงค์พร้อมยืนเลน ป้องป้อมเก่งมาก ทักมาตี้ได้เลย' }
+        ];
+
+        let currentActiveChatBuddy = '';
+
+        function toggleDarkMode() {
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            if (htmlEl.classList.contains('dark')) {
+                htmlEl.classList.remove('dark');
+                htmlEl.classList.add('light');
+                themeIcon.innerText = '🌙';
+                localStorage.setItem('theme', 'light');
+            } else {
+                htmlEl.classList.remove('light');
+                htmlEl.classList.add('dark');
+                themeIcon.innerText = '☀️';
+                localStorage.setItem('theme', 'dark');
+            }
+        }
+
+        function initTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            const htmlEl = document.documentElement;
+            const themeIcon = document.getElementById('theme-icon');
+            if (savedTheme === 'dark') {
+                htmlEl.classList.remove('light');
+                htmlEl.classList.add('dark');
+                themeIcon.innerText = '☀️';
+            } else {
+                htmlEl.classList.remove('dark');
+                htmlEl.classList.add('light');
+                themeIcon.innerText = '🌙';
+            }
+        }
+
+        function switchTab(tabName) {
+            ['home', 'topup', 'shop', 'match', 'queue', 'profile'].forEach(t => {
+                document.getElementById(`tab-${t}`).classList.add('hidden');
+                const navEl = document.getElementById(`nav-${t}`);
+                if (navEl) {
+                    navEl.classList.remove('text-[#bc6c25]', 'dark:text-[#e0a96d]');
+                    navEl.classList.add('text-[#a4907c]');
+                }
+            });
+            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
+            const activeNav = document.getElementById(`nav-${tabName}`);
+            if (activeNav) {
+                activeNav.classList.remove('text-[#a4907c]');
+                activeNav.classList.add('text-[#bc6c25]', 'dark:text-[#e0a96d]');
+            }
+        }
+
+        function updateWalletUI() {
+            document.getElementById('user-credit').innerText = userCredit;
+            document.getElementById('user-points').innerText = userPoints;
+            document.getElementById('profile-credit-val').innerText = userCredit;
+            document.getElementById('profile-point-val').innerText = userPoints;
+        }
+
+        function formatClock(secondsTotal) {
+            const h = Math.floor(secondsTotal / 3600) % 24;
+            const m = Math.floor((secondsTotal % 3600) / 60);
+            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
+        }
+
+        function formatCountdown(secondsLeft) {
+            if (secondsLeft <= 0) return 'หมดเวลาแล้วจ้า ⏰';
+            const h = Math.floor(secondsLeft / 3600);
+            const m = Math.floor((secondsLeft % 3600) / 60);
+            const s = secondsLeft % 60;
+            if (h > 0) return `เหลือเวลา: ${h} ชม. ${m} น.`;
+            else if (m > 0) return `เหลือเวลา: ${m} นาที`;
+            else return `เหลือเวลา: ${s} วินาที`;
+        }
+
+        function formatQueueCountdown(secondsLeft) {
+            if (secondsLeft <= 0) return 'ถึงเวลาแล้ว! ไปรับเครื่องเลยจ้า 🎉';
+            const h = Math.floor(secondsLeft / 3600);
+            const m = Math.floor((secondsLeft % 3600) / 60);
+            const s = secondsLeft % 60;
+            if (h > 0) return `อีก ${h} ชม. ${m} นาที`;
+            else if (m > 0) return `อีก ${m} นาที ${s} วินาที`;
+            else return `อีก ${s} วินาที`;
+        }
+
+        function renderPCGrid() {
+            const grid = document.getElementById('pc-grid');
+            const select = document.getElementById('selected-pc');
+            const currentSelectedValue = select.value;
+
+            grid.innerHTML = '';
+            select.innerHTML = '<option value="">-- เลือกเครื่องคอมพิวเตอร์ --</option>';
+
+            let availableCount = 0;
+            pcs.forEach(pc => {
+                if (pc.status === 'available') availableCount++;
+
+                const pcBookings = activeBookings.filter(b => b.pcId === pc.id);
+                let bookingBadgeHtml = pcBookings.length > 0 
+                    ? `<div class="bg-[#faedcd]/80 dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] text-[9px] px-1.5 py-0.5 rounded border border-[#d4a373]/30 font-medium truncate mt-1">📌 จองแล้ว: ${pcBookings.map(b => b.timeStr).join(', ')} น.</div>`
+                    : `<div class="text-[#a4907c] text-[9px] mt-1">✨ ยังไม่มีคิวจองล่วงหน้า</div>`;
+
+                let hpPercent = pc.status === 'available' ? 100 : Math.max(0, Math.floor((pc.timeLeft / pc.maxHp) * 100));
+                let statusTextHtml = pc.status === 'available' 
+                    ? '<span class="text-[#606c38] dark:text-[#a3be8c] font-bold">🟢 ว่างน่ารัก</span>' 
+                    : `<span class="text-[#bc6c25] dark:text-[#e0a96d] font-bold text-[9px]">⏳ ${formatCountdown(pc.timeLeft)}</span>`;
+
+                const card = document.createElement('div');
+                card.className = `p-2.5 rounded-xl border flex flex-col justify-between transition active:scale-95 cursor-pointer ${
+                    pc.status === 'available' ? 'bg-[#fdfbf7] dark:bg-[#1a1512] border-[#d8c5b2] dark:border-[#3a2e26]' : 'bg-[#f9f5ed]/80 dark:bg-[#241e19]/80 border-[#e6d7c3] dark:border-[#3a2e26]'
+                }`;
+                card.onclick = () => showPCSpecs(pc.id);
+
+                card.innerHTML = `
+                    <div>
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-[11px] text-[#5c4033] dark:text-[#f4ece1]">${pc.name}</span>
+                            <span class="text-[9px] text-[#a4907c]">${pc.specs.gpu.split(' ')[0]}</span>
+                        </div>
+                        <div class="w-full bg-[#f0e6db] dark:bg-[#3a2e26] h-2 rounded-full overflow-hidden my-1">
+                            <div class="h-full ${pc.status === 'available' ? 'bg-[#606c38] dark:bg-[#a3be8c]' : 'bg-[#bc6c25]'}" style="width: ${hpPercent}%"></div>
+                        </div>
+                        ${bookingBadgeHtml}
+                    </div>
+                    <div class="mt-2 flex justify-between items-center text-[10px] pt-1 border-t border-[#eae0d0]/50 dark:border-[#3a2e26]">
+                        ${statusTextHtml}
+                        <span class="text-[#bc6c25] dark:text-[#e0a96d] underline text-[9px]">ดูสเปก</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+                select.innerHTML += `<option value="${pc.id}">${pc.name} (${pc.specs.gpu})</option>`;
+            });
+            document.getElementById('available-count').innerText = availableCount;
+            if (currentSelectedValue) select.value = currentSelectedValue;
+        }
+
+        function showPCSpecs(pcId) {
+            const pc = pcs.find(p => p.id === pcId);
+            if (!pc) return;
+            
+            document.getElementById('spec-modal-title').innerText = `🖥️ สเปก ${pc.name}`;
+            document.getElementById('spec-gpu').innerText = pc.specs.gpu;
+            document.getElementById('spec-cpu').innerText = pc.specs.cpu;
+            document.getElementById('spec-ram').innerText = pc.specs.ram;
+            document.getElementById('spec-monitor').innerText = pc.specs.monitor;
+
+            const statusBadge = document.getElementById('modal-pc-status-badge');
+            const selectBtn = document.getElementById('modal-select-btn');
+
+            if (pc.status === 'available') {
+                statusBadge.className = 'text-center py-1.5 px-2 rounded-lg text-xs font-bold bg-[#fefae0] dark:bg-[#2d2a1b] text-[#606c38] dark:text-[#a3be8c] border border-[#ccd5ae] dark:border-[#3a2e26]';
+                statusBadge.innerText = `🟢 สถานะ: ว่างพร้อมใช้งานจ้า`;
+                selectBtn.onclick = () => { closeModal('spec-modal'); document.getElementById('selected-pc').value = pc.id; switchTab('home'); };
+            } else {
+                statusBadge.className = 'text-center py-1.5 px-2 rounded-lg text-xs font-bold bg-[#fcf5ed] dark:bg-[#2d241e] text-[#bc6c25] dark:text-[#e0a96d] border border-[#e6d7c3] dark:border-[#3a2e26]';
+                statusBadge.innerText = `⏳ สถานะ: กำลังใช้งานอยู่ (${formatCountdown(pc.timeLeft)})`;
+                selectBtn.onclick = () => { closeModal('spec-modal'); document.getElementById('selected-pc').value = pc.id; switchTab('home'); };
+            }
+            openModal('spec-modal');
+        }
+
+        function openModal(id) { document.getElementById(id).classList.remove('hidden'); document.getElementById(id).classList.add('flex'); }
+        function closeModal(id) { document.getElementById(id).classList.remove('flex'); document.getElementById(id).classList.add('hidden'); }
+        function closeSuccessPopup() { closeModal('success-popup'); }
+        
+        function showPopup(title, msg, icon = '🎉') {
+            document.getElementById('success-popup-title').innerText = title;
+            document.getElementById('success-popup-msg').innerText = msg;
+            document.getElementById('popup-icon').innerText = icon;
+            openModal('success-popup');
+        }
+
+        function topUpCredit(creditAmount, priceBaht) {
+            userCredit += creditAmount;
+            userPoints += Math.floor(creditAmount / 10);
+            updateWalletUI();
+            showPopup('เติมเครดิตสำเร็จ!', `🎉 เติมสำเร็จ! ได้รับ ${creditAmount} เครดิต (G) เรียบร้อยแล้วค่า ✨`, '💳');
+        }
+
+        function handleCustomTopUp() {
+            const inputEl = document.getElementById('custom-topup-amount');
+            const amount = parseInt(inputEl.value);
+            if (!amount || amount <= 0) {
+                showPopup('กรุณาระบุจำนวนเงิน', 'กรุณากรอกตัวเลขจำนวนเงินที่ต้องการเติมให้ถูกต้องด้วยนะจ้า 🧸', '⚠️');
+                return;
+            }
+            topUpCredit(amount, amount);
+            inputEl.value = '';
+        }
+
+        function socialRegister(method) {
+            currentUser = `Gamer_${method.split(' ')[0]}`;
+            loginSuccess(currentUser, `เข้าสู่ระบบสำเร็จผ่านบัญชี ${method}! 🎉`);
+        }
+        function handleLogin(e) { e.preventDefault(); loginSuccess(document.getElementById('login-username').value, 'ยินดีต้อนรับกลับมานะคะ! 💖'); }
+
+        // --- ระบบส่งรหัส SMS OTP จำลอง ---
+        function sendSMSOTP() {
+            const phone = document.getElementById('reg-phone').value;
+            if (!phone || phone.length < 10) {
+                showPopup('กรุณากรอกเบอร์โทร', 'กรุณากรอกเบอร์โทรศัพท์มือถือ 10 หลักให้ถูกต้องก่อนขอรหัส SMS จ้า 📱', '⚠️');
+                return;
+            }
+            generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
+            document.getElementById('reg-otp').value = generatedOtp; // ใส่รหัสอัตโนมัติเพื่อความสะดวกในการทดสอบ
+            showPopup('ส่งรหัส SMS สำเร็จ', `📩 ส่งรหัส OTP ไปที่เบอร์ ${phone} เรียบร้อยแล้ว!\n(จำลองรหัส OTP ของคุณคือ: ${generatedOtp})`, '💬');
+        }
+
+        function handleRegister(e) { 
+            e.preventDefault(); 
+            const userOtp = document.getElementById('reg-otp').value;
+            if (userOtp !== generatedOtp) {
+                showPopup('รหัส OTP ไม่ถูกต้อง', 'รหัสยืนยัน SMS (OTP) ไม่ถูกต้อง กรุณากดขอรหัสใหม่อีกครั้งจ้า ⚠️', '⚠️');
+                return;
+            }
+
+            loginSuccess(document.getElementById('reg-username').value, 'สมัครสมาชิกผ่าน SMS สำเร็จ รับโบนัส 50 แต้ม! ✨'); 
+            userPoints += 50; 
+            updateWalletUI(); 
+            closeModal('register-modal'); 
+        }
+
+        function loginSuccess(username, msg) {
+            currentUser = username;
+            document.getElementById('username').value = username;
+            document.getElementById('profile-username').innerText = username;
+            const authScreen = document.getElementById('auth-screen');
+            authScreen.style.opacity = '0';
+            setTimeout(() => authScreen.classList.add('hidden'), 300);
+            showPopup('เย้! สำเร็จแล้วค่า', msg, '🎉');
+        }
+
+        function logout() {
+            const authScreen = document.getElementById('auth-screen');
+            authScreen.classList.remove('hidden');
+            authScreen.style.opacity = '1';
+            showPopup('ออกจากระบบ', 'ออกจากระบบเรียบร้อยแล้วจ้า 🚪', '🚪');
+        }
+
+        // --- ระบบตรวจสอบและป้องกันการจองคิวซ้ำซ้อน (Conflict Check) ---
+        function handleBooking(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const pcId = parseInt(document.getElementById('selected-pc').value);
+            const bookingTimeStr = document.getElementById('booking-time-select').value; 
+            const packageSelect = document.getElementById('package-price');
+            const price = parseInt(packageSelect.value);
+            const hours = parseInt(packageSelect.options[packageSelect.selectedIndex].getAttribute('data-hours'));
+            const earnedPts = hours === 1 ? 15 : (hours === 3 ? 40 : 70);
+
+            if (userCredit < price) { 
+                showPopup('เครดิตไม่พอจ้า', 'เครดิตของคุณไม่พอจ้า เติมเงินก่อนนะเด็กๆ! 🍪', '⚠️'); 
+                return; 
+            }
+
+            const isAlreadyBooked = activeBookings.some(b => b.pcId === pcId && b.timeStr === bookingTimeStr);
+            if (isAlreadyBooked) {
+                const pcObj = pcs.find(p => p.id === pcId);
+                document.getElementById('overlap-popup-msg').innerText = `เครื่อง ${pcObj ? pcObj.name : 'นี้'} มีผู้จองรอบเวลา ${bookingTimeStr} น. ไปแล้วเรียบร้อย กรุณาเปลี่ยนเครื่องหรือเลือกเวลาอื่นจ้า!`;
+                openModal('overlap-popup');
+                return;
+            }
+
+            userCredit -= price;
+            userPoints += earnedPts;
+            updateWalletUI();
+
+            const [hPart, mPart] = bookingTimeStr.split(':').map(Number);
+            const targetSecs = hPart * 3600 + mPart * 60;
+            const pc = pcs.find(p => p.id === pcId);
+            
+            activeBookings.push({ pcId: pc.id, username, pcName: pc.name, timeStr: bookingTimeStr, targetSeconds: targetSecs, packageHours: hours, packagePrice: price, earnedPoints: earnedPts });
+            
+            renderActiveBookings();
+            renderPCGrid();
+            document.getElementById('booking-form').reset();
+            document.getElementById('username').value = currentUser;
+
+            showPopup('จองสำเร็จแล้วค่า!', `จอง ${pc.name} สำเร็จ! หัก ${price} G ได้รับ +${earnedPts} แต้มสะสม ⭐`, '🎉');
+        }
+
+        function orderFood(item, price, pts) {
+            if (userCredit < price) { 
+                showPopup('เครดิตไม่พอจ้า', 'เครดิตไม่พอสั่งขนมจ้า! 🥞', '⚠️'); 
+                return; 
+            }
+            userCredit -= price;
+            userPoints += pts;
+            updateWalletUI();
+            showPopup('สั่งขนมสำเร็จ!', `สั่ง ${item} ราคา ${price} G สำเร็จ! รับแต้มสะสม +${pts} Pts ☕`, '🥞');
+        }
+
+        function handlePostProfile(e) {
+            e.preventDefault();
+            const game = document.getElementById('post-game').value;
+            const style = document.getElementById('post-style').value;
+            const bio = document.getElementById('post-bio').value;
+
+            gamerProfiles.unshift({
+                id: Date.now(),
+                author: currentUser,
+                game: game,
+                style: style,
+                bio: bio
+            });
+
+            renderProfileFeed();
+            document.getElementById('post-bio').value = '';
+            showPopup('โพสต์โปรไฟล์สำเร็จ!', 'เผยแพร่โปรไฟล์เกมเมอร์ของคุณลงบอร์ดเรียบร้อยแล้วจ้า มีเพื่อนๆ เตรียมทักมาชวนเล่นแน่นอน! ✨', '📢');
+        }
+
+        function renderProfileFeed() {
+            const filterGame = document.getElementById('filter-game').value;
+            const feedListEl = document.getElementById('profile-feed-list');
+
+            let filtered = gamerProfiles;
+            if (filterGame !== 'All') {
+                filtered = gamerProfiles.filter(p => p.game === filterGame);
+            }
+
+            if (filtered.length === 0) {
+                feedListEl.innerHTML = `<p class="text-xs text-[#a4907c] text-center py-4">ยังไม่มีโพสต์โปรไฟล์ในเกมนี้ ลองโพสต์คนแรกเลยสิคะ! 🍃</p>`;
+                return;
+            }
+
+            feedListEl.innerHTML = filtered.map(p => `
+                <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-3 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] space-y-1.5 text-xs animate-pop">
+                    <div class="flex justify-between items-center">
+                        <div class="font-bold text-[#5c4033] dark:text-[#f4ece1] flex items-center gap-1.5">
+                            <span>🧸</span> ${p.author}
+                        </div>
+                        <span class="text-[9px] bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] px-2 py-0.5 rounded-full font-bold">🎮 ${p.game}</span>
+                    </div>
+                    <div class="text-[10px] text-[#8c6d53] dark:text-[#bda38e]">
+                        สไตล์: <span class="font-semibold text-[#bc6c25] dark:text-[#e0a96d]">${p.style}</span>
+                    </div>
+                    <div class="bg-white dark:bg-[#241e19] p-2 rounded-lg border border-[#eae0d0] dark:border-[#3a2e26] text-[11px] text-[#5c4033] dark:text-[#f4ece1]">
+                        "${p.bio}"
+                    </div>
+                    <div class="flex justify-end pt-1">
+                        <button onclick="chatWithGamer('${p.author}')" class="bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] px-2.5 py-1 rounded-md text-[10px] font-bold hover:bg-[#fefae0] transition">💬 ทักแชทชวนเล่น</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function chatWithGamer(authorName) {
+            currentActiveChatBuddy = authorName;
+            document.getElementById('chat-buddy-name').innerText = `แชทกับเกมเมอร์: ${authorName}`;
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML = `
+                <div class="text-center text-[10px] text-[#a4907c] my-1">- เริ่มต้นทักทาย ${authorName} จากบอร์ดโปรไฟล์ -</div>
+                <div class="bg-[#faedcd]/60 dark:bg-[#3d3222] p-2 rounded-lg text-[11px] text-[#5c4033] dark:text-[#f4ece1] max-w-[80%]">
+                    สวัสดีจ้า เห็นโพสต์หาตี้เกมของคุณ สนใจมาจอยโต๊ะเดียวกันไหมคะ? 🍪✨
+                </div>
+            `;
+            openModal('chat-modal');
+        }
+
+        function sendChatMessage() {
+            const inputEl = document.getElementById('chat-input');
+            const text = inputEl.value.trim();
+            if (!text) return;
+
+            const chatMessages = document.getElementById('chat-messages');
+            chatMessages.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-gradient-to-r from-[#d4a373] to-[#bc6c25] text-white p-2 rounded-lg text-[11px] max-w-[80%] shadow-sm">
+                        ${text}
+                    </div>
+                </div>
+            `;
+            inputEl.value = '';
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            setTimeout(() => {
+                const replies = [
+                    "ยินดีเลยค่ะคุณ! กำลังว่างพอดี มาลุยกันเลย 🚀",
+                    "ทักมาถูกเวลามากค่ะ เดี๋ยวเรากดตี้รอเลยนะ 💖",
+                    "น่ารักจัง มาจอยกันๆ ขอสั่งขนมแป๊บนะ 😄",
+                    "ลุยเลย เย้ๆ จัดไปยาวๆ ครับ 🎉"
+                ];
+                const randomReply = replies[Math.floor(Math.random() * replies.length)];
+                chatMessages.innerHTML += `
+                    <div class="flex justify-start">
+                        <div class="bg-[#faedcd] dark:bg-[#3d3222] text-[#5c4033] dark:text-[#f4ece1] p-2 rounded-lg text-[11px] max-w-[80%] border border-[#e6d7c3] dark:border-[#3a2e26]">
+                            ${randomReply}
+                        </div>
+                    </div>
+                `;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 1000);
+        }
+
+        function handleChatKeyPress(e) {
+            if (e.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function redeemReward(rewardName, requiredPts) {
+            if (userPoints < requiredPts) {
+                showPopup('แต้มสะสมไม่พอจ้า!', `แต้มสะสมของคุณไม่พอจ้า! ต้องการ ${requiredPts} Pts (คุณมี ${userPoints} Pts) มาเล่นเกมและกินหนมเพิ่มน้า 🧸`, '⚠️');
+                return;
+            }
+            userPoints -= requiredPts;
+            updateWalletUI();
+            showPopup('แลกรางวัลสำเร็จ!', `🎉 แลกรางวัล "${rewardName}" สำเร็จเรียบร้อย! เจ้าหน้าที่กำลังนำมาเสิร์ฟ/จัดเก็บเข้าตู้ให้ทันทีค่า! 🎁`, '🎁');
+        }
+
+        function renderActiveBookings() {
+            const container = document.getElementById('active-queue-list');
+            if (activeBookings.length === 0) {
+                container.innerHTML = `<p class="text-xs text-[#a4907c] text-center py-6">ยังไม่มีการจองคิวในขณะนี้จ้า 🍃</p>`;
+                return;
+            }
+
+            container.innerHTML = activeBookings.map(b => {
+                const diffSeconds = b.targetSeconds - currentTimeSeconds;
+                return `
+                    <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-3 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] space-y-2 text-xs">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <div class="font-bold text-sm text-[#5c4033] dark:text-[#f4ece1]">${b.pcName} <span class="text-xs font-normal text-[#a4907c]">(${b.username})</span></div>
+                                <div class="text-[11px] text-[#7f5539] dark:text-[#d4a373] mt-0.5">⏰ รอบเวลาจอง: <strong class="text-[#bc6c25]">${b.timeStr} น.</strong></div>
+                                <div class="text-[10px] text-[#606c38] dark:text-[#a3be8c] mt-0.5">📦 แพ็กเกจ: ${b.packageHours} ชม. | รับแต้มสะสม: +${b.earnedPoints} Pts ⭐</div>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-[#a4907c] block">ต้องไปรับเครื่องใน</span>
+                                <span class="text-[#bc6c25] dark:text-[#e0a96d] font-bold text-xs">${formatQueueCountdown(diffSeconds)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        setInterval(() => {
+            currentTimeSeconds++;
+            if (currentTimeSeconds >= 86400) currentTimeSeconds = 0; 
+            document.getElementById('current-time-bar').innerText = formatClock(currentTimeSeconds);
+
+            pcs.forEach(pc => {
+                if (pc.status === 'busy' && pc.timeLeft > 0) {
+                    pc.timeLeft--;
+                    if (pc.timeLeft <= 0) { pc.status = 'available'; pc.timeLeft = 0; }
+                }
+            });
+            renderPCGrid();
+            renderActiveBookings();
+        }, 1000);
+
+        initTheme();
+        document.getElementById('current-time-bar').innerText = formatClock(currentTimeSeconds);
+        renderPCGrid();
+        renderActiveBookings();
+        renderProfileFeed();
+        updateWalletUI();
+    </script>
+</body>
+</html>
