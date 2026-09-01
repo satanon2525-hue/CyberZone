@@ -918,7 +918,6 @@
             const filterGame = document.getElementById('filter-game').value;
             const feedListEl = document.getElementById('profile-feed-list');
 
-            // ซ่อนโพสต์ของตัวเองในฟีดรวมบอร์ด (เพื่อไม่ให้กดชวนตัวเองในบอร์ดสาธารณะ) หรือกรองเฉพาะของคนอื่น
             let filtered = gamerProfiles.filter(p => p.author !== currentUser);
             if (filterGame !== 'All') {
                 filtered = filtered.filter(p => p.game === filterGame);
@@ -950,7 +949,6 @@
             `).join('');
         }
 
-        // --- ฟังก์ชันแสดงและจัดการโพสต์ส่วนตัวเฉพาะของฉันในหน้าโปรไฟล์ ---
         function renderMyProfilePosts() {
             const myPostsListEl = document.getElementById('my-profile-posts-list');
             const myPostsCountEl = document.getElementById('my-posts-count');
