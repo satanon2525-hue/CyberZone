@@ -361,6 +361,18 @@
                     <button onclick="logout()" class="w-full bg-[#fdfbf7] dark:bg-[#1a1512] hover:bg-[#fcf5ed] border border-[#e6d7c3] dark:border-[#3a2e26] py-2 rounded-xl text-xs font-medium text-[#bc6c25] dark:text-[#e0a96d] transition">ออกจากระบบ 🚪</button>
                 </div>
 
+                <!-- My Posts Section (Separated in Profile Tab) -->
+                <div class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1] flex items-center gap-1.5">📑 โพสต์โปรไฟล์ส่วนตัวของฉัน</h2>
+                        <span id="my-posts-count" class="text-[10px] bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] px-2 py-0.5 rounded-full font-bold">0 โพสต์</span>
+                    </div>
+                    <p class="text-[11px] text-[#8c6d53] dark:text-[#bda38e]">รวบรวมโพสต์โปรไฟล์เกมเมอร์ที่คุณสร้างไว้ทั้งหมด สามารถดูหรือกดลบโพสต์ได้ที่นี่จ้า (ไม่มีปุ่มทักแชทรบกวนตัวเอง)</p>
+                    <div id="my-profile-posts-list" class="space-y-2 pt-1">
+                        <!-- รายการโพสต์ส่วนตัวจะถูกเรนเดอร์มาที่นี่ -->
+                    </div>
+                </div>
+
                 <div class="bg-white dark:bg-[#241e19] rounded-2xl p-4 border border-[#eae0d0] dark:border-[#3a2e26] shadow-sm space-y-3">
                     <div class="flex items-center justify-between">
                         <h2 class="text-sm font-bold text-[#5c4033] dark:text-[#f4ece1] flex items-center gap-1.5">🎁 ร้านค้าแลกแต้มสะสม (Reward Store)</h2>
@@ -587,7 +599,7 @@
             { id: 1, author: 'Mimi_Cute', game: 'Valorant', style: 'สายซัพพอร์ตใจดี 💖', bio: 'เล่นเก่งไม่เน้น เน้นปาหัวใจใส่เพื่อนร่วมทีม ใครสนใจมาจอยกันได้น้า 🧸' },
             { id: 2, author: 'Boss_Gamer', game: 'Overcooked', style: 'สายแบกจริงจังแรงค์พุ่ง 🚀', bio: 'ครัวไม่ไหม้ไม่เลิกเล่น! ใครมือไวใจนิ่งมารวมกันตรงนี้ 🍳' },
             { id: 3, author: 'Nong_Pang', game: 'Valorant', style: 'สายฮาเน้นเอ็นเตอร์เทน 😄', bio: 'ยิงโดนบ้างไม่โดนบ้าง แต่เสียงหัวเราะมาเต็มแน่นอน มาจอยกันจ้า' },
-            { id: 4, author: 'Sugar_Bear', game: 'RoV', style: 'สายซัพพอร์ตใจดี 💖', bio: 'เมจ/แทงค์พร้อมยืนเลน ป้องป้อมเก่งมาก ทักมาตี้ได้เลย' }
+            { id: 4, author: 'Gamer_Pro99', game: 'Valorant', style: 'สายแบกจริงจังแรงค์พุ่ง 🚀', bio: 'โพสต์ส่วนตัวทดสอบระบบ โปรไฟล์ของฉันเองจ้า มาลุยกัน!' }
         ];
 
         let currentActiveChatBuddy = '';
@@ -637,6 +649,9 @@
             if (activeNav) {
                 activeNav.classList.remove('text-[#a4907c]');
                 activeNav.classList.add('text-[#bc6c25]', 'dark:text-[#e0a96d]');
+            }
+            if (tabName === 'profile') {
+                renderMyProfilePosts();
             }
         }
 
@@ -784,7 +799,6 @@
         }
         function handleLogin(e) { e.preventDefault(); loginSuccess(document.getElementById('login-username').value, 'ยินดีต้อนรับกลับมานะคะ! 💖'); }
 
-        // --- ระบบส่งรหัส SMS OTP จำลอง ---
         function sendSMSOTP() {
             const phone = document.getElementById('reg-phone').value;
             if (!phone || phone.length < 10) {
@@ -792,7 +806,7 @@
                 return;
             }
             generatedOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('reg-otp').value = generatedOtp; // ใส่รหัสอัตโนมัติเพื่อความสะดวกในการทดสอบ
+            document.getElementById('reg-otp').value = generatedOtp; 
             showPopup('ส่งรหัส SMS สำเร็จ', `📩 ส่งรหัส OTP ไปที่เบอร์ ${phone} เรียบร้อยแล้ว!\n(จำลองรหัส OTP ของคุณคือ: ${generatedOtp})`, '💬');
         }
 
@@ -817,6 +831,7 @@
             const authScreen = document.getElementById('auth-screen');
             authScreen.style.opacity = '0';
             setTimeout(() => authScreen.classList.add('hidden'), 300);
+            renderMyProfilePosts();
             showPopup('เย้! สำเร็จแล้วค่า', msg, '🎉');
         }
 
@@ -827,7 +842,6 @@
             showPopup('ออกจากระบบ', 'ออกจากระบบเรียบร้อยแล้วจ้า 🚪', '🚪');
         }
 
-        // --- ระบบตรวจสอบและป้องกันการจองคิวซ้ำซ้อน (Conflict Check) ---
         function handleBooking(e) {
             e.preventDefault();
             const username = document.getElementById('username').value;
@@ -895,6 +909,7 @@
             });
 
             renderProfileFeed();
+            renderMyProfilePosts();
             document.getElementById('post-bio').value = '';
             showPopup('โพสต์โปรไฟล์สำเร็จ!', 'เผยแพร่โปรไฟล์เกมเมอร์ของคุณลงบอร์ดเรียบร้อยแล้วจ้า มีเพื่อนๆ เตรียมทักมาชวนเล่นแน่นอน! ✨', '📢');
         }
@@ -903,13 +918,14 @@
             const filterGame = document.getElementById('filter-game').value;
             const feedListEl = document.getElementById('profile-feed-list');
 
-            let filtered = gamerProfiles;
+            // ซ่อนโพสต์ของตัวเองในฟีดรวมบอร์ด (เพื่อไม่ให้กดชวนตัวเองในบอร์ดสาธารณะ) หรือกรองเฉพาะของคนอื่น
+            let filtered = gamerProfiles.filter(p => p.author !== currentUser);
             if (filterGame !== 'All') {
-                filtered = gamerProfiles.filter(p => p.game === filterGame);
+                filtered = filtered.filter(p => p.game === filterGame);
             }
 
             if (filtered.length === 0) {
-                feedListEl.innerHTML = `<p class="text-xs text-[#a4907c] text-center py-4">ยังไม่มีโพสต์โปรไฟล์ในเกมนี้ ลองโพสต์คนแรกเลยสิคะ! 🍃</p>`;
+                feedListEl.innerHTML = `<p class="text-xs text-[#a4907c] text-center py-4">ยังไม่มีโพสต์จากเพื่อนๆ ในเกมนี้ ลองชวนเพื่อนมาโพสต์กันสิคะ! 🍃</p>`;
                 return;
             }
 
@@ -932,6 +948,42 @@
                     </div>
                 </div>
             `).join('');
+        }
+
+        // --- ฟังก์ชันแสดงและจัดการโพสต์ส่วนตัวเฉพาะของฉันในหน้าโปรไฟล์ ---
+        function renderMyProfilePosts() {
+            const myPostsListEl = document.getElementById('my-profile-posts-list');
+            const myPostsCountEl = document.getElementById('my-posts-count');
+
+            const myPosts = gamerProfiles.filter(p => p.author === currentUser);
+            myPostsCountEl.innerText = `${myPosts.length} โพสต์`;
+
+            if (myPosts.length === 0) {
+                myPostsListEl.innerHTML = `<p class="text-[11px] text-[#a4907c] text-center py-4">คุณยังไม่มีโพสต์โปรไฟล์ส่วนตัว ไปที่แท็บโพสต์โปรไฟล์เพื่อสร้างโพสต์กันเลยจ้า 🧸</p>`;
+                return;
+            }
+
+            myPostsListEl.innerHTML = myPosts.map(p => `
+                <div class="bg-[#fdfbf7] dark:bg-[#1a1512] p-2.5 rounded-xl border border-[#e6d7c3] dark:border-[#3a2e26] space-y-1.5 text-xs">
+                    <div class="flex justify-between items-center">
+                        <span class="text-[9px] bg-[#faedcd] dark:bg-[#3d3222] text-[#bc6c25] dark:text-[#e0a96d] px-2 py-0.5 rounded-full font-bold">🎮 ${p.game}</span>
+                        <button onclick="deleteMyPost(${p.id})" class="text-[10px] text-[#bc6c25] hover:underline font-semibold">ลบโพสต์ 🗑️</button>
+                    </div>
+                    <div class="text-[10px] text-[#8c6d53] dark:text-[#bda38e]">
+                        สไตล์: <span class="font-semibold text-[#bc6c25] dark:text-[#e0a96d]">${p.style}</span>
+                    </div>
+                    <div class="bg-white dark:bg-[#241e19] p-2 rounded-lg border border-[#eae0d0] dark:border-[#3a2e26] text-[11px] text-[#5c4033] dark:text-[#f4ece1]">
+                        "${p.bio}"
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function deleteMyPost(postId) {
+            gamerProfiles = gamerProfiles.filter(p => p.id !== postId);
+            renderProfileFeed();
+            renderMyProfilePosts();
+            showPopup('ลบโพสต์สำเร็จ', 'ลบโพสต์โปรไฟล์ส่วนตัวของคุณเรียบร้อยแล้วจ้า 🗑️', '✨');
         }
 
         function chatWithGamer(authorName) {
@@ -1045,6 +1097,7 @@
         renderPCGrid();
         renderActiveBookings();
         renderProfileFeed();
+        renderMyProfilePosts();
         updateWalletUI();
     </script>
 </body>
