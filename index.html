@@ -1,1120 +1,1536 @@
 <!DOCTYPE html>
 <html lang="th" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CYBER-ZONE GAMING - Cyberpunk Gaming Space</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-        }
-    </script>
-    <style>
-        body {
-            font-family: 'Kanit', sans-serif;
-            -webkit-tap-highlight-color: transparent;
-            user-select: none;
-            background-color: #050b14;
-            color: #b0c4de;
-        }
-        .mobile-frame {
-            width: 100%;
-            max-width: 420px;
-            height: 100vh;
-            max-height: 880px;
-            overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            position: relative;
-            background-color: #0b1329;
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            box-shadow: 0 0 15px rgba(0, 240, 255, 0.08);
-        }
-        @media (min-width: 640px) {
-            body {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                min-height: 100vh;
-                padding: 20px;
-            }
-            .mobile-frame {
-                border-radius: 24px;
-            }
-        }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-        
-        @keyframes popIn {
-            0% { transform: scale(0.85); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        .animate-pop { animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
-
-        @keyframes lightningFlash {
-            0%, 90%, 94%, 98%, 100% { opacity: 0.01; }
-            92%, 96% { opacity: 0.06; }
-        }
-        .cyber-lightning-bg {
-            position: absolute;
-            inset: 0;
-            pointer-events: none;
-            background-image: radial-gradient(circle at 20% 30%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
-                              radial-gradient(circle at 80% 70%, rgba(112, 0, 255, 0.08) 0%, transparent 40%);
-            animation: lightningFlash 7s infinite;
-            z-index: 10;
-        }
-
-        @keyframes clickSpark {
-            0% { transform: scale(0); opacity: 0.8; box-shadow: 0 0 0 0 rgba(0, 240, 255, 0.5); }
-            100% { transform: scale(2); opacity: 0; box-shadow: 0 0 10px 5px rgba(0, 240, 255, 0); }
-        }
-        .click-effect {
-            position: absolute;
-            width: 24px;
-            height: 24px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(0, 240, 255, 0.8) 0%, rgba(112, 0, 255, 0.2) 100%);
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            animation: clickSpark 0.35s ease-out forwards;
-            z-index: 9999;
-        }
-
-        .neon-border {
-            border: 1px solid rgba(0, 240, 255, 0.2);
-            box-shadow: 0 0 6px rgba(0, 240, 255, 0.05);
-        }
-        .neon-border:focus-within, .neon-border:hover {
-            border-color: rgba(0, 240, 255, 0.5);
-            box-shadow: 0 0 10px rgba(0, 240, 255, 0.15);
-        }
-        .neon-text {
-            text-shadow: 0 0 4px rgba(0, 240, 255, 0.3);
-        }
-    </style>
+<meta charset="UTF-8">
+<!-- FIX B-UX: เอา user-scalable=no ออก ให้ซูมได้ตามหลัก Accessibility -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>CYBER-ZONE GAMING v2.0 — Store Management System</title>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script>tailwind.config = { darkMode: 'class' }</script>
+<style>
+  :root{ --cy:#00f0ff; --bg0:#050b14; --bg1:#070e21; --bg2:#0b1329; --line:#1e3a8a; --tx:#b0c4de; }
+  *{ -webkit-tap-highlight-color: transparent; }
+  body{ font-family:'Kanit',sans-serif; background:#030712; color:var(--tx); }
+  input,textarea,select{ user-select:text; }
+  /* FIX B: ใช้ 100dvh กันแถบ URL มือถือกินพื้นที่ */
+  .mobile-frame{ width:100%; max-width:430px; height:100dvh; max-height:920px; overflow:hidden;
+    display:flex; flex-direction:column; position:relative; background:var(--bg2);
+    border:1px solid rgba(0,240,255,.2); box-shadow:0 0 15px rgba(0,240,255,.08); }
+  @media(min-width:640px){ body{display:flex;align-items:center;justify-content:center;min-height:100vh;padding:20px}
+    .mobile-frame{border-radius:24px} }
+  .no-scrollbar::-webkit-scrollbar{display:none}
+  .no-scrollbar{-ms-overflow-style:none;scrollbar-width:none}
+  @keyframes popIn{0%{transform:scale(.9);opacity:0}100%{transform:scale(1);opacity:1}}
+  .animate-pop{animation:popIn .2s cubic-bezier(.175,.885,.32,1.275) forwards}
+  @keyframes slideIn{0%{transform:translateY(-14px);opacity:0}100%{transform:translateY(0);opacity:1}}
+  .animate-slide{animation:slideIn .22s ease-out forwards}
+  @keyframes lightningFlash{0%,90%,94%,98%,100%{opacity:.01}92%,96%{opacity:.06}}
+  .cyber-lightning-bg{position:absolute;inset:0;pointer-events:none;
+    background-image:radial-gradient(circle at 20% 30%,rgba(0,240,255,.08)0%,transparent 40%),
+                     radial-gradient(circle at 80% 70%,rgba(112,0,255,.08)0%,transparent 40%);
+    animation:lightningFlash 7s infinite;z-index:10}
+  @keyframes clickSpark{0%{transform:scale(0);opacity:.8}100%{transform:scale(2);opacity:0}}
+  /* FIX B-UX: position fixed ให้ประกายตรงจุดที่แตะแม้หน้าเลื่อน */
+  .click-effect{position:fixed;width:22px;height:22px;border-radius:50%;
+    background:radial-gradient(circle,rgba(0,240,255,.8)0%,rgba(112,0,255,.2)100%);
+    transform:translate(-50%,-50%);pointer-events:none;animation:clickSpark .35s ease-out forwards;z-index:9999}
+  .neon-text{text-shadow:0 0 4px rgba(0,240,255,.35)}
+  .card{background:var(--bg2);border:1px solid rgba(30,58,138,.4);border-radius:1rem}
+  .sub{background:var(--bg0);border:1px solid rgba(30,58,138,.6);border-radius:.75rem}
+  .inp{width:100%;background:var(--bg0);border:1px solid rgba(30,58,138,.7);border-radius:.75rem;
+    padding:.5rem .75rem;color:#e2e8f0;font-size:.8rem;outline:none}
+  .inp:focus{border-color:rgba(0,240,255,.6)}
+  .btn-primary{background:linear-gradient(to right,rgba(0,240,255,.85),rgba(59,130,246,.85));
+    color:#020617;font-weight:700;border-radius:.75rem}
+  .btn-primary:active{transform:scale(.97)}
+  .btn-primary:disabled{opacity:.45;cursor:not-allowed}
+  .btn-ghost{background:rgba(30,58,138,.5);color:var(--cy);border:1px solid rgba(0,240,255,.2);border-radius:.6rem}
+  .badge{font-size:.62rem;padding:.12rem .5rem;border-radius:9999px;font-weight:700;display:inline-block}
+  .tl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+  table.rep{width:100%;font-size:.7rem;border-collapse:collapse}
+  table.rep th,table.rep td{padding:.35rem .4rem;border-bottom:1px solid rgba(30,58,138,.35);text-align:left}
+  table.rep th{color:#7096d1;font-weight:600}
+</style>
 </head>
-<body class="p-0 sm:p-4 bg-[#030712] text-[#b0c4de] transition-colors duration-300">
+<body class="p-0 sm:p-4">
+<div class="mobile-frame">
+  <div class="cyber-lightning-bg"></div>
 
-    <div class="mobile-frame">
-        <div class="cyber-lightning-bg"></div>
+  <!-- ══════════ STATUS BAR ══════════ -->
+  <div class="bg-[#050b14] px-5 py-2 flex justify-between items-center text-[11px] font-medium text-[#7096d1] z-50 shrink-0 border-b border-[#1e3a8a]/30">
+    <span id="clock-bar" class="text-[#00f0ff] font-semibold">--:--:--</span>
+    <div class="flex items-center gap-2"><span class="text-[#00f0ff]/90">⚡ 5G</span><span>🔋 99%</span></div>
+  </div>
 
-        <!-- Intro / Welcome Auth Screen -->
-        <div id="auth-screen" class="absolute inset-0 bg-[#070e21] z-[100] flex flex-col justify-between p-5 transition-opacity duration-300 overflow-y-auto no-scrollbar">
-            <div class="text-center space-y-1.5 pt-4">
-                <div class="w-14 h-14 bg-[#0b193a] rounded-2xl mx-auto flex items-center justify-center text-2xl shadow-md border border-[#00f0ff]/30 text-[#00f0ff] neon-text">⚡</div>
-                <h1 class="text-base font-bold text-slate-100 tracking-wider neon-text">CYBER-ZONE GAMING</h1>
-                <p class="text-[10px] text-[#7096d1]">ระบบล็อกอินเครือข่ายความเร็วสูง พร้อมลุยโลกไซเบอร์ 🌐⚡</p>
-            </div>
-
-            <div class="space-y-3 my-auto py-1">
-                <div class="bg-[#0b1329] border border-[#1e3a8a]/50 rounded-2xl p-4 shadow-lg space-y-3">
-                    <form onsubmit="handleSMSLogin(event)" class="space-y-3 text-xs">
-                        <div>
-                            <label class="block text-[10px] text-[#7096d1] mb-1">เบอร์โทรศัพท์มือถือ 📱</label>
-                            <div class="flex gap-1.5">
-                                <input type="tel" id="login-phone" required placeholder="0891234567" maxlength="10" oninput="validatePhoneInput(this)" class="w-full bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-3 py-2 text-slate-200 text-xs focus:outline-none focus:border-[#00f0ff]/60 transition">
-                                <button type="button" onclick="sendLoginSMSOTP()" class="bg-[#1e3a8a]/60 hover:bg-[#1e3a8a] text-[#00f0ff] px-3 py-2 rounded-xl font-bold text-[10px] shrink-0 border border-[#00f0ff]/20 transition shadow-sm">ส่ง SMS</button>
-                            </div>
-                            <p id="phone-error-hint" class="text-[9px] text-red-400 mt-1 hidden">เบอร์โทรศัพท์ต้องขึ้นต้นด้วย 0 และมีครบ 10 หลัก</p>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-[#7096d1] mb-1">รหัสยืนยัน SMS (OTP) 💬</label>
-                            <input type="text" id="login-otp" required placeholder="กรอกรหัส 6 หลัก" maxlength="6" class="w-full bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-3 py-2 text-slate-200 text-xs focus:outline-none focus:border-[#00f0ff]/60 transition">
-                        </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-[#00f0ff]/80 to-[#3b82f6]/80 hover:from-[#00f0ff] hover:to-[#3b82f6] py-2.5 rounded-xl font-bold text-gray-950 text-xs shadow-md transition mt-1">ยืนยันเข้าสู่ระบบ Cyber ⚡</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="text-center pb-2">
-                <span class="text-[10px] text-slate-500">CyberZone Grid & Neural Gaming Network ⚡</span>
-            </div>
-        </div>
-
-        <!-- Status Bar -->
-        <div class="bg-[#050b14] px-6 py-2 flex justify-between items-center text-[11px] font-medium text-[#7096d1] z-50 shrink-0 border-b border-[#1e3a8a]/30">
-            <span id="current-time-bar" class="text-[#00f0ff]">10:50</span>
-            <div class="flex items-center space-x-2">
-                <span class="text-[#00f0ff]/90">⚡ 5G ULTRA</span>
-                <span class="text-slate-400">🔋 99%</span>
-            </div>
-        </div>
-
-        <!-- Header -->
-        <header class="bg-[#0b1329]/95 backdrop-blur-md border-b border-[#1e3a8a]/40 px-4 py-2.5 flex justify-between items-center z-40 shrink-0">
-            <div class="flex items-center space-x-1.5">
-                <span class="text-sm font-bold text-slate-100 flex items-center gap-1 neon-text">⚡ CYBER-ZONE</span>
-            </div>
-            <div class="flex items-center space-x-2">
-                <div class="bg-[#050b14] px-2.5 py-1 rounded-full border border-[#00f0ff]/20 text-xs flex items-center gap-1 shadow-sm">
-                    <span class="text-[#00f0ff]">💠</span>
-                    <span id="user-credit" class="font-bold text-[#00f0ff]">500</span>
-                    <span class="text-[10px] text-[#7096d1]">G</span>
-                </div>
-                <div class="bg-[#050b14] px-2.5 py-1 rounded-full border border-purple-500/20 text-xs flex items-center gap-1 shadow-sm">
-                    <span class="text-purple-400">⚡</span>
-                    <span id="user-points" class="font-bold text-purple-400">2</span>
-                    <span class="text-[10px] text-[#7096d1]">Pts</span>
-                </div>
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main id="app-content" class="flex-grow overflow-y-auto no-scrollbar p-4 space-y-4 pb-20 bg-[#070e21]">
-            
-            <!-- Tab 1: Home -->
-            <div id="tab-home" class="space-y-4">
-                <div class="relative rounded-2xl overflow-hidden border border-[#00f0ff]/25 p-4 bg-gradient-to-r from-[#0b193a] via-[#0f172a] to-[#1e1b4b] flex items-center justify-between shadow-md">
-                    <div class="space-y-1.5 z-10">
-                        <span class="bg-[#00f0ff]/10 text-[#00f0ff] text-[10px] px-2.5 py-0.5 rounded-full border border-[#00f0ff]/20 font-semibold inline-block">🌐 NEXUS GAMING HUB</span>
-                        <h1 class="text-base font-bold text-slate-100">เชื่อมต่อสถานีรบไซเบอร์ของคุณ</h1>
-                        <p class="text-[#7096d1] text-[11px]">เลือกพอร์ตเครื่องคอมพิวเตอร์ระดับไฮเอนด์และเช็กสถานะเรียลไทม์ได้ด้านล่าง</p>
-                    </div>
-                </div>
-
-                <div class="bg-[#0b1329] rounded-2xl p-4 border border-[#1e3a8a]/40 shadow-lg space-y-3">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-1.5">🖥️ สถานะเครื่องข่าย Cyber Stations</h2>
-                        <div class="text-[11px] text-[#7096d1]">ว่าง: <span id="available-count" class="text-[#00f0ff] font-bold">8</span> / 12</div>
-                    </div>
-                    <div id="pc-grid" class="grid grid-cols-2 gap-2.5"></div>
-                </div>
-
-                <div id="booking-section" class="bg-[#0b1329] rounded-2xl p-4 border border-[#1e3a8a]/40 shadow-lg space-y-3">
-                    <h2 class="text-sm font-bold text-slate-100">⚡ ฟอร์มจองพอร์ตเชื่อมต่อเครื่อง</h2>
-                    <form id="booking-form" onsubmit="handleBooking(event)" class="space-y-2.5 text-xs">
-                        <div>
-                            <label class="block text-[11px] font-medium text-[#7096d1] mb-1">รหัสผู้ใช้สมาชิก (User ID)</label>
-                            <input type="text" id="username" required readonly class="w-full bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-3 py-2 text-slate-300 text-xs focus:outline-none">
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-medium text-[#7096d1] mb-1">เลือกพอร์ตเครื่องที่ต้องการจอง</label>
-                            <select id="selected-pc" required class="w-full bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-3 py-2 text-slate-200 text-xs focus:outline-none focus:border-[#00f0ff]/60">
-                                <option value="">-- เลือกสถานีคอมพิวเตอร์ --</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-medium text-[#7096d1] mb-1">เวลาเข้าเชื่อมต่อระบบ ⏰</label>
-                            <select id="booking-time-select" required class="w-full bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-3 py-2 text-slate-200 text-xs focus:outline-none focus:border-[#00f0ff]/60">
-                                <option value="11:00">11:00 น.</option>
-                                <option value="12:00">12:00 น.</option>
-                                <option value="13:00">13:00 น.</option>
-                                <option value="14:00">14:00 น.</option>
-                                <option value="15:00">15:00 น.</option>
-                                <option value="16:00">16:00 น.</option>
-                                <option value="18:00">18:00 น. (Peak Time)</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-[11px] font-medium text-[#7096d1] mb-1">เลือกแพ็กเกจพลังงาน ⚡</label>
-                            <select id="package-price" required class="w-full bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-3 py-2 text-slate-200 text-xs focus:outline-none focus:border-[#00f0ff]/60">
-                                <option value="50" data-hours="1">1 ชั่วโมง - 50 เครดิต (รับ 15 Pts)</option>
-                                <option value="120" data-hours="3">3 ชั่วโมง - 120 เครดิต - คุ้มสุด! (รับ 40 Pts)</option>
-                                <option value="200" data-hours="5">5 ชั่วโมง - 200 เครดิต (รับ 70 Pts)</option>
-                            </select>
-                        </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-[#00f0ff]/80 to-[#3b82f6]/80 hover:from-[#00f0ff] hover:to-[#3b82f6] py-2.5 rounded-xl font-bold text-gray-950 text-xs shadow-md active:scale-95 transition mt-1">⚡ ยืนยันการจองพอร์ต</button>
-                    </form>
-                </div>
-            </div>
-
-            <!-- Tab 2: Top-Up & Credit -->
-            <div id="tab-topup" class="space-y-4 hidden">
-                <div class="bg-[#0b1329] rounded-2xl p-4 border border-[#1e3a8a]/40 shadow-lg space-y-3">
-                    <h2 class="text-sm font-bold text-slate-100 flex items-center gap-1.5">💳 เติมเครดิตพลังงาน (Cyber Credits)</h2>
-                    <p class="text-[11px] text-[#7096d1]">เติมเครดิต (G) เพื่อใช้เชื่อมต่อสถานีเกมและสั่งเสบียงพลังงานด่วนได้ทันที ⚡</p>
-                    
-                    <div class="grid grid-cols-2 gap-2.5 pt-1">
-                        <div onclick="topUpCredit(50, 50)" class="bg-[#050b14] p-3 rounded-xl border border-[#1e3a8a]/60 text-center cursor-pointer active:scale-95 transition hover:border-[#00f0ff]/50">
-                            <span class="text-xl">🔋</span>
-                            <div class="font-bold text-xs text-slate-200 mt-1">50 เครดิต</div>
-                            <div class="text-[10px] text-[#00f0ff] font-semibold mt-0.5">ราคา 50 บาท</div>
-                        </div>
-                        <div onclick="topUpCredit(120, 100)" class="bg-[#050b14] p-3 rounded-xl border border-[#1e3a8a]/60 text-center cursor-pointer active:scale-95 transition hover:border-[#00f0ff]/50 relative">
-                            <span class="absolute -top-2 right-2 bg-[#00f0ff] text-gray-950 text-[8px] px-1.5 py-0.5 rounded-full font-bold">คุ้มสุด</span>
-                            <span class="text-xl">⚡</span>
-                            <div class="font-bold text-xs text-slate-200 mt-1">120 เครดิต</div>
-                            <div class="text-[10px] text-[#00f0ff] font-semibold mt-0.5">ราคา 100 บาท</div>
-                        </div>
-                        <div onclick="topUpCredit(300, 250)" class="bg-[#050b14] p-3 rounded-xl border border-[#1e3a8a]/60 text-center cursor-pointer active:scale-95 transition hover:border-[#00f0ff]/50">
-                            <span class="text-xl">💠</span>
-                            <div class="font-bold text-xs text-slate-200 mt-1">300 เครดิต</div>
-                            <div class="text-[10px] text-[#00f0ff] font-semibold mt-0.5">ราคา 250 บาท</div>
-                        </div>
-                        <div onclick="topUpCredit(700, 500)" class="bg-[#050b14] p-3 rounded-xl border border-[#1e3a8a]/60 text-center cursor-pointer active:scale-95 transition hover:border-[#00f0ff]/50 relative">
-                            <span class="absolute -top-2 right-2 bg-purple-500 text-white text-[8px] px-1.5 py-0.5 rounded-full font-bold">ยอดฮิต</span>
-                            <span class="text-xl">👑</span>
-                            <div class="font-bold text-xs text-slate-200 mt-1">700 เครดิต</div>
-                            <div class="text-[10px] text-[#00f0ff] font-semibold mt-0.5">ราคา 500 บาท</div>
-                        </div>
-                    </div>
-
-                    <div class="pt-3 border-t border-[#1e3a8a]/40 space-y-2">
-                        <h3 class="text-xs font-bold text-slate-100">⚡ เติมเงินผ่านระบบอัตโนมัติ PromptPay</h3>
-                        <div class="flex gap-2">
-                            <input type="number" id="custom-topup-amount" placeholder="ระบุจำนวนเงิน (บาท)" class="w-full bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-3 py-2 text-slate-200 text-xs focus:outline-none">
-                            <button onclick="handleCustomTopUp()" class="bg-gradient-to-r from-[#00f0ff]/80 to-[#3b82f6]/80 px-4 py-2 rounded-xl font-bold text-gray-950 text-xs shrink-0 shadow-md">เติมเงิน ⚡</button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 3: Shop & Food -->
-            <div id="tab-shop" class="space-y-4 hidden">
-                <div class="bg-[#0b1329] rounded-2xl p-4 border border-[#1e3a8a]/40 shadow-lg space-y-3">
-                    <h2 class="text-sm font-bold text-slate-100 flex items-center gap-1.5">🍔 สั่งอาหารและเครื่องดื่มพลังงานสูง</h2>
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 flex flex-col justify-between">
-                            <div>
-                                <span class="text-xl">☕</span>
-                                <h3 class="font-bold text-xs text-slate-100 mt-1">Cyber Espresso</h3>
-                                <p class="text-[10px] text-[#7096d1]">คาเฟอีนเข้มข้นตาสว่างทะลุมิติ (+10 Pts)</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-[#00f0ff] text-xs font-bold">35 G</span>
-                                <button onclick="orderFood('Cyber Espresso', 35, 10)" class="bg-[#1e3a8a]/60 text-[#00f0ff] hover:bg-[#1e3a8a] text-[10px] px-2.5 py-1 rounded-lg font-medium transition">สั่งเลย ⚡</button>
-                            </div>
-                        </div>
-                        <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 flex flex-col justify-between">
-                            <div>
-                                <span class="text-xl">🥞</span>
-                                <h3 class="font-bold text-xs text-slate-100 mt-1">Energy Pancake</h3>
-                                <p class="text-[10px] text-[#7096d1]">เติมพลังงานระหว่างลงแทงก์ (+12 Pts)</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-[#00f0ff] text-xs font-bold">45 G</span>
-                                <button onclick="orderFood('Energy Pancake', 45, 12)" class="bg-[#1e3a8a]/60 text-[#00f0ff] hover:bg-[#1e3a8a] text-[10px] px-2.5 py-1 rounded-lg font-medium transition">สั่งเลย ⚡</button>
-                            </div>
-                        </div>
-                        <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 flex flex-col justify-between">
-                            <div>
-                                <span class="text-xl">🍪</span>
-                                <h3 class="font-bold text-xs text-slate-100 mt-1">Neon Cookie</h3>
-                                <p class="text-[10px] text-[#7096d1]">กรุบกรอบเคี้ยวเพลินยามดวลปืน (+15 Pts)</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-[#00f0ff] text-xs font-bold">50 G</span>
-                                <button onclick="orderFood('Neon Cookie', 50, 15)" class="bg-[#1e3a8a]/60 text-[#00f0ff] hover:bg-[#1e3a8a] text-[10px] px-2.5 py-1 rounded-lg font-medium transition">สั่งเลย ⚡</button>
-                            </div>
-                        </div>
-                        <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 flex flex-col justify-between">
-                            <div>
-                                <span class="text-xl">🧋</span>
-                                <h3 class="font-bold text-xs text-slate-100 mt-1">Cyber Milk Tea</h3>
-                                <p class="text-[10px] text-[#7096d1]">ไข่มุกหนึบหนับเพิ่มความเร็วเน็ต (+12 Pts)</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-[#00f0ff] text-xs font-bold">45 G</span>
-                                <button onclick="orderFood('Cyber Milk Tea', 45, 12)" class="bg-[#1e3a8a]/60 text-[#00f0ff] hover:bg-[#1e3a8a] text-[10px] px-2.5 py-1 rounded-lg font-medium transition">สั่งเลย ⚡</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 4: Gamer Profile Posting Board -->
-            <div id="tab-match" class="space-y-4 hidden">
-                <div class="bg-[#0b1329] rounded-2xl p-4 border border-[#1e3a8a]/40 shadow-lg space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-1.5">⚡ บอร์ดโพสต์หาตี้เกมเมอร์</h2>
-                        <span class="text-[10px] bg-[#1e3a8a]/60 text-[#00f0ff] px-2.5 py-0.5 rounded-full font-bold border border-[#00f0ff]/20">Network Feed</span>
-                    </div>
-                    <p class="text-[11px] text-[#7096d1]">ประกาศหาเพื่อนร่วมตี้หรือแชร์สไตล์การเล่นของคุณบนเครือข่าย CyberZone ได้เลย!</p>
-                    
-                    <form onsubmit="handlePostProfile(event)" class="space-y-2.5 bg-[#050b14] p-3 rounded-xl border border-[#1e3a8a]/60">
-                        <h3 class="text-xs font-bold text-slate-100">✨ สร้างโปรไฟล์สตรีมของคุณ</h3>
-                        <div class="grid grid-cols-2 gap-2 text-xs">
-                            <div>
-                                <label class="block text-[10px] text-[#7096d1] mb-1">เลือกเกมหลัก</label>
-                                <select id="post-game" required class="w-full bg-[#0b1329] border border-[#1e3a8a]/70 rounded-xl px-2.5 py-1.5 text-slate-200 text-xs">
-                                    <option value="Valorant">Valorant (ยิงสนั่นโซน)</option>
-                                    <option value="Overcooked">Overcooked (ครัวเดือด)</option>
-                                    <option value="RoV">RoV (ดันป้อมทะลุมิติ)</option>
-                                    <option value="Cyberpunk">Cyberpunk Online</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-[#7096d1] mb-1">สไตล์การเล่น</label>
-                                <select id="post-style" required class="w-full bg-[#0b1329] border border-[#1e3a8a]/70 rounded-xl px-2.5 py-1.5 text-slate-200 text-xs">
-                                    <option value="สายซัพพอร์ตสุดเทพ ⚡">สายซัพพอร์ตสุดเทพ ⚡</option>
-                                    <option value="สายปาร์ตี้ฮาเฮ 😄">สายปาร์ตี้ฮาเฮ 😄</option>
-                                    <option value="สายแบกแรงค์พุ่ง 🚀">สายแบกแรงค์พุ่ง 🚀</option>
-                                    <option value="สายฟาร์มชิลล์โซน 🍃">สายฟาร์มชิลล์โซน 🍃</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-[#7096d1] mb-1">ข้อความแนะนำตัว / โค้ดชวนเล่น</label>
-                            <input type="text" id="post-bio" required placeholder="เช่น หาตี้ลงแรงค์ด่วน ทักมาเลย!" class="w-full bg-[#0b1329] border border-[#1e3a8a]/70 rounded-xl px-2.5 py-1.5 text-slate-200 text-xs">
-                        </div>
-                        <button type="submit" class="w-full bg-gradient-to-r from-[#00f0ff]/80 to-[#3b82f6]/80 py-2 rounded-xl text-gray-950 font-bold text-xs shadow-md transition">📢 ส่งสัญญาณประกาศหาตี้</button>
-                    </form>
-
-                    <div class="pt-2">
-                        <div class="flex justify-between items-center mb-2">
-                            <h3 class="text-xs font-bold text-slate-100">🌟 ฟีดประกาศทั้งหมด:</h3>
-                            <select id="filter-game" onchange="renderProfileFeed()" class="bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-2 py-1 text-[10px] text-slate-200">
-                                <option value="All">แสดงทุกเกม</option>
-                                <option value="Valorant">Valorant</option>
-                                <option value="Overcooked">Overcooked</option>
-                                <option value="RoV">RoV</option>
-                                <option value="Cyberpunk">Cyberpunk</option>
-                            </select>
-                        </div>
-                        <div id="profile-feed-list" class="space-y-2"></div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 5: Queue -->
-            <div id="tab-queue" class="space-y-4 hidden">
-                <div class="bg-[#0b1329] rounded-2xl p-4 border border-[#1e3a8a]/40 shadow-lg space-y-3">
-                    <h2 class="text-sm font-bold text-slate-100">⏳ คิวเชื่อมต่อและเวลาเข้าใช้งาน ⚡</h2>
-                    <div id="active-queue-list" class="space-y-2">
-                        <p class="text-xs text-[#7096d1] text-center py-6">ยังไม่มีการจองคิวในระบบขณะนี้ 🌐</p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Tab 6: Profile & Reward Store -->
-            <div id="tab-profile" class="space-y-4 hidden">
-                <div class="bg-[#0b1329] rounded-2xl p-5 border border-[#1e3a8a]/40 shadow-lg text-center space-y-3">
-                    <div class="w-16 h-16 bg-[#050b14] rounded-2xl mx-auto flex items-center justify-center text-2xl font-bold text-[#00f0ff] shadow-inner border border-[#00f0ff]/20">⚡</div>
-                    <div>
-                        <h3 class="font-bold text-slate-100 text-sm" id="profile-username">-</h3>
-                        <p class="text-[11px] text-[#7096d1]">สถานะเครือข่าย: <span id="profile-status" class="text-[#00f0ff] font-semibold">ยืนยันตัวตนด้วย SMS เรียบร้อย 🌐</span></p>
-                    </div>
-                    <div class="flex justify-center gap-4 text-xs bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60">
-                        <div>เครดิต: <span id="profile-credit-val" class="font-bold text-[#00f0ff]">500</span> G</div>
-                        <div>แต้มสะสม: <span id="profile-point-val" class="font-bold text-purple-400">2</span> Pts</div>
-                    </div>
-                    <button onclick="logout()" class="w-full bg-[#050b14] hover:bg-[#1e3a8a]/30 border border-[#1e3a8a]/60 py-2 rounded-xl text-xs font-medium text-[#00f0ff] transition">ตัดการเชื่อมต่อ (Log out) 🔌</button>
-                </div>
-
-                <!-- My Posts Section -->
-                <div class="bg-[#0b1329] rounded-2xl p-4 border border-[#1e3a8a]/40 shadow-lg space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-1.5">📑 ประกาศของฉัน</h2>
-                        <span id="my-posts-count" class="text-[10px] bg-[#1e3a8a]/60 text-[#00f0ff] px-2 py-0.5 rounded-full font-bold">0 โพสต์</span>
-                    </div>
-                    <p class="text-[11px] text-[#7096d1]">จัดการประกาศหาตี้หรือลบโพสต์ของคุณได้ที่นี่</p>
-                    <div id="my-profile-posts-list" class="space-y-2 pt-1"></div>
-                </div>
-
-                <div class="bg-[#0b1329] rounded-2xl p-4 border border-[#1e3a8a]/40 shadow-lg space-y-3">
-                    <div class="flex items-center justify-between">
-                        <h2 class="text-sm font-bold text-slate-100 flex items-center gap-1.5">🎁 ร้านค้าแลกรางวัล Cyber Store</h2>
-                        <span class="text-[10px] text-[#7096d1]">ใช้แต้ม Pts แลกไอเทมพิเศษ</span>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2.5">
-                        <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 flex flex-col justify-between">
-                            <div>
-                                <span class="text-xl">💡</span>
-                                <h3 class="font-bold text-xs text-slate-100 mt-1">ไฟนีออน RGB แต่งห้อง</h3>
-                                <p class="text-[10px] text-[#7096d1]">เพิ่มบรรยากาศเกมเมอร์อวกาศ</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-purple-400 text-xs font-bold">100 Pts</span>
-                                <button onclick="redeemReward('ไฟนีออน RGB แต่งห้อง', 100)" class="bg-[#1e3a8a]/60 text-[#00f0ff] hover:bg-[#1e3a8a] text-[10px] px-2 py-1 rounded-lg font-medium transition">แลกรางวัล ⚡</button>
-                            </div>
-                        </div>
-                        <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 flex flex-col justify-between">
-                            <div>
-                                <span class="text-xl">💺</span>
-                                <h3 class="font-bold text-xs text-slate-100 mt-1">เก้าอี้เกมมิ่ง Cyber</h3>
-                                <p class="text-[10px] text-[#7096d1]">นั่งสบายรองรับทุกการสตรีม</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-purple-400 text-xs font-bold">300 Pts</span>
-                                <button onclick="redeemReward('เก้าอี้เกมมิ่ง Cyber', 300)" class="bg-[#1e3a8a]/60 text-[#00f0ff] hover:bg-[#1e3a8a] text-[10px] px-2 py-1 rounded-lg font-medium transition">แลกรางวัล ⚡</button>
-                            </div>
-                        </div>
-                        <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 flex flex-col justify-between">
-                            <div>
-                                <span class="text-xl">🎟️</span>
-                                <h3 class="font-bold text-xs text-slate-100 mt-1">คูปองเล่นฟรี 1 ชม.</h3>
-                                <p class="text-[10px] text-[#7096d1]">เชื่อมต่อฟรีครั้งถัดไปในร้าน</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-purple-400 text-xs font-bold">80 Pts</span>
-                                <button onclick="redeemReward('คูปองเล่นฟรี 1 ชม.', 80)" class="bg-[#1e3a8a]/60 text-[#00f0ff] hover:bg-[#1e3a8a] text-[10px] px-2 py-1 rounded-lg font-medium transition">แลกรางวัล ⚡</button>
-                            </div>
-                        </div>
-                        <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 flex flex-col justify-between">
-                            <div>
-                                <span class="text-xl">☕</span>
-                                <h3 class="font-bold text-xs text-slate-100 mt-1">คูปองเครื่องดื่มฟรี 1 แก้ว</h3>
-                                <p class="text-[10px] text-[#7096d1]">แลกรับเมนูพลังงานแก้วโปรด</p>
-                            </div>
-                            <div class="flex justify-between items-center mt-3">
-                                <span class="text-purple-400 text-xs font-bold">60 Pts</span>
-                                <button onclick="redeemReward('คูปองเครื่องดื่มฟรี 1 แก้ว', 60)" class="bg-[#1e3a8a]/60 text-[#00f0ff] hover:bg-[#1e3a8a] text-[10px] px-2 py-1 rounded-lg font-medium transition">แลกรางวัล ⚡</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </main>
-
-        <!-- Navigation Bar -->
-        <nav class="bg-[#0b1329]/95 backdrop-blur-md border-t border-[#1e3a8a]/40 px-1 py-2 flex justify-around items-center z-50 shrink-0">
-            <button onclick="switchTab('home')" id="nav-home" class="flex flex-col items-center text-[#00f0ff] transition">
-                <span class="text-base">🏠</span>
-                <span class="text-[8px] font-medium mt-0.5">หน้าแรก</span>
-            </button>
-            <button onclick="switchTab('topup')" id="nav-topup" class="flex flex-col items-center text-[#7096d1] hover:text-slate-200 transition">
-                <span class="text-base">💳</span>
-                <span class="text-[8px] font-medium mt-0.5">เติมเงิน</span>
-            </button>
-            <button onclick="switchTab('shop')" id="nav-shop" class="flex flex-col items-center text-[#7096d1] hover:text-slate-200 transition">
-                <span class="text-base">🍔</span>
-                <span class="text-[8px] font-medium mt-0.5">สั่งอาหาร</span>
-            </button>
-            <button onclick="switchTab('match')" id="nav-match" class="flex flex-col items-center text-[#7096d1] hover:text-slate-200 transition">
-                <span class="text-base">⚡</span>
-                <span class="text-[8px] font-medium mt-0.5">หาตี้เกม</span>
-            </button>
-            <button onclick="switchTab('queue')" id="nav-queue" class="flex flex-col items-center text-[#7096d1] hover:text-slate-200 transition">
-                <span class="text-base">⏳</span>
-                <span class="text-[8px] font-medium mt-0.5">คิวของฉัน</span>
-            </button>
-            <button onclick="switchTab('profile')" id="nav-profile" class="flex flex-col items-center text-[#7096d1] hover:text-slate-200 transition">
-                <span class="text-base">👤</span>
-                <span class="text-[8px] font-medium mt-0.5">โปรไฟล์</span>
-            </button>
-        </nav>
-
-        <div class="bg-[#0b1329] pb-1 pt-0.5 flex justify-center shrink-0">
-            <div class="w-32 h-1 bg-[#1e3a8a]/50 rounded-full"></div>
-        </div>
-
+  <!-- ══════════ HEADER ══════════ -->
+  <header class="bg-[#0b1329]/95 backdrop-blur-md border-b border-[#1e3a8a]/40 px-3 py-2.5 flex justify-between items-center z-40 shrink-0">
+    <div class="flex items-center gap-2">
+      <span class="text-sm font-bold text-slate-100 neon-text whitespace-nowrap">⚡ CYBER-ZONE</span>
+      <!-- ปุ่มสลับโหมด แอดมิน / ลูกค้า -->
+      <button data-act="toggle-role" id="role-toggle-btn" class="bg-[#050b14] hover:bg-[#1e3a8a]/50 text-xs px-2.5 py-1 rounded-full border border-[#00f0ff]/40 flex items-center gap-1.5 transition font-medium">
+        <span id="role-icon">👤</span>
+        <span id="role-label" class="text-[#00f0ff] font-bold">ลูกค้า</span>
+        <span class="text-[10px] text-slate-400">🔄 สลับ</span>
+      </button>
     </div>
-
-    <!-- Modals -->
-    <div id="success-popup" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-[#0b1329] border border-[#00f0ff]/30 rounded-2xl p-5 max-w-xs w-full text-center space-y-3 animate-pop shadow-xl">
-            <div id="popup-icon" class="w-12 h-12 bg-[#050b14] text-[#00f0ff] rounded-2xl flex items-center justify-center mx-auto text-xl font-bold border border-[#00f0ff]/20">⚡</div>
-            <h2 id="success-popup-title" class="text-base font-bold text-slate-100">ระบบทำงานสำเร็จ</h2>
-            <p id="success-popup-msg" class="text-[#7096d1] text-[11px]">ดำเนินการเรียบร้อยสมบูรณ์แบบ</p>
-            <button onclick="closeSuccessPopup()" class="w-full bg-gradient-to-r from-[#00f0ff]/80 to-[#3b82f6]/80 py-2 rounded-xl font-bold text-gray-950 text-xs shadow-md">ยืนยัน ⚡</button>
-        </div>
+    <div class="flex items-center gap-1.5">
+      <div id="wallet-box" class="bg-[#050b14] px-2 py-1 rounded-full border border-[#00f0ff]/20 text-xs flex items-center gap-1">
+        <span class="text-[#00f0ff]">💠</span><span id="hdr-credit" class="font-bold text-[#00f0ff]">0</span><span class="text-[10px] text-[#7096d1]">G</span>
+      </div>
+      <div id="point-box" class="bg-[#050b14] px-2 py-1 rounded-full border border-purple-500/20 text-xs flex items-center gap-1">
+        <span class="text-purple-400">⚡</span><span id="hdr-point" class="font-bold text-purple-400">0</span><span class="text-[10px] text-[#7096d1]">P</span>
+      </div>
+      <button data-act="open-notif" class="relative bg-[#050b14] w-8 h-8 rounded-full border border-[#1e3a8a]/60 text-sm">🔔
+        <span id="notif-badge" class="hidden absolute -top-1 -right-1 bg-red-500 text-white text-[9px] min-w-[16px] h-4 px-1 rounded-full flex items-center justify-center font-bold">0</span>
+      </button>
     </div>
+  </header>
 
-    <!-- Chat Modal -->
-    <div id="chat-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-[#0b1329] border border-[#00f0ff]/30 rounded-2xl w-full max-w-xs h-[420px] flex flex-col shadow-xl animate-pop overflow-hidden">
-            <div class="bg-[#050b14] p-3 border-b border-[#1e3a8a]/60 flex justify-between items-center shrink-0">
-                <div class="flex items-center space-x-2">
-                    <span class="text-lg">💬</span>
-                    <div>
-                        <h3 id="chat-buddy-name" class="text-xs font-bold text-slate-100">แชนแนลสนทนา</h3>
-                        <p class="text-[9px] text-[#00f0ff]">🟢 เชื่อมต่อเครือข่ายแล้ว</p>
-                    </div>
-                </div>
-                <button onclick="closeModal('chat-modal')" class="text-[#7096d1] hover:text-slate-200 text-lg font-bold">&times;</button>
-            </div>
-            <div id="chat-messages" class="flex-grow p-3 overflow-y-auto space-y-2 text-xs bg-[#070e21]">
-                <div class="text-center text-[10px] text-slate-500 my-1">- เริ่มต้นส่งข้อความเข้าระบบแชท -</div>
-            </div>
-            <div class="p-2.5 bg-[#0b1329] border-t border-[#1e3a8a]/60 flex gap-1.5 shrink-0">
-                <input type="text" id="chat-input" placeholder="พิมพ์ข้อความ..." class="w-full bg-[#050b14] border border-[#1e3a8a]/70 rounded-xl px-2.5 py-1.5 text-slate-200 text-xs focus:outline-none" onkeypress="handleChatKeyPress(event)">
-                <button onclick="sendChatMessage()" class="bg-gradient-to-r from-[#00f0ff]/80 to-[#3b82f6]/80 px-3 py-1.5 rounded-xl text-gray-950 font-bold text-xs shrink-0 shadow-md">ส่ง</button>
-            </div>
+  <!-- ══════════ MAIN ══════════ -->
+  <main id="app-content" class="flex-grow overflow-y-auto no-scrollbar p-3 space-y-3 pb-6 bg-[#070e21]">
+
+    <!-- ───── CUSTOMER: HOME / BOOKING ───── -->
+    <section id="tab-home" class="space-y-3">
+      <div class="rounded-2xl border border-[#00f0ff]/25 p-4 bg-gradient-to-r from-[#0b193a] via-[#0f172a] to-[#1e1b4b] space-y-1.5">
+        <span class="badge bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/20">🌐 NEXUS GAMING HUB</span>
+        <h1 class="text-base font-bold text-slate-100">เชื่อมต่อสถานีรบไซเบอร์ของคุณ</h1>
+        <p id="tier-line" class="text-[#7096d1] text-xs">ระดับสมาชิก: <b class="text-[#00f0ff]">-</b></p>
+      </div>
+
+      <div class="card p-3.5 space-y-3">
+        <div class="flex justify-between items-center">
+          <h2 class="text-sm font-bold text-slate-100">🖥️ สถานะเครื่อง</h2>
+          <div class="text-xs text-[#7096d1]">ว่าง: <span id="available-count" class="text-[#00f0ff] font-bold">0</span> / <span id="total-count">0</span></div>
         </div>
-    </div>
+        <div id="pc-grid" class="grid grid-cols-2 gap-2.5"></div>
+      </div>
 
-    <!-- Overlap Warning Modal -->
-    <div id="overlap-popup" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-[#0b1329] border border-amber-500/30 rounded-2xl p-5 max-w-xs w-full text-center space-y-3 animate-pop shadow-xl">
-            <div class="w-12 h-12 bg-[#050b14] text-amber-400 rounded-2xl flex items-center justify-center mx-auto text-xl font-bold border border-amber-500/20">⚠️</div>
-            <h2 class="text-base font-bold text-slate-100">แจ้งเตือนคิวทับซ้อน</h2>
-            <p id="overlap-popup-msg" class="text-[#7096d1] text-[11px]">พอร์ตนี้มีผู้จองรอบเวลานี้ไปแล้ว กรุณาเลือกเวลาอื่น</p>
-            <button onclick="closeModal('overlap-popup')" class="w-full bg-gradient-to-r from-amber-500/80 to-orange-500/80 py-2 rounded-xl font-bold text-gray-950 text-xs shadow-md">เข้าใจแล้ว ⚡</button>
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">⚡ ฟอร์มจองเครื่อง</h2>
+        <form id="booking-form" class="space-y-2.5 text-xs">
+          <div>
+            <label class="block text-xs text-[#7096d1] mb-1">ผู้จอง</label>
+            <input type="text" id="bk-user" readonly class="inp opacity-70">
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs text-[#7096d1] mb-1">วันที่</label>
+              <select id="bk-date" class="inp"></select>
+            </div>
+            <div>
+              <label class="block text-xs text-[#7096d1] mb-1">เครื่อง</label>
+              <select id="bk-pc" required class="inp"></select>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block text-xs text-[#7096d1] mb-1">เวลาเริ่ม ⏰</label>
+              <select id="bk-time" required class="inp"></select>
+            </div>
+            <div>
+              <label class="block text-xs text-[#7096d1] mb-1">แพ็กเกจ ⚡</label>
+              <select id="bk-pkg" required class="inp"></select>
+            </div>
+          </div>
+          <div id="price-preview" class="sub p-2.5 text-[11px] space-y-1"></div>
+          <button type="submit" class="w-full btn-primary py-2.5 text-xs">⚡ ยืนยันการจอง</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- ───── CUSTOMER: TOPUP ───── -->
+    <section id="tab-topup" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">💳 เติมเครดิต (Cyber Credits)</h2>
+        <p class="text-xs text-[#7096d1]">เครดิต (G) ใช้จองเครื่องและสั่งอาหาร · <b class="text-[#00f0ff]">เรตพื้นฐาน 1 บาท = 1 G</b> แพ็กเกจมีโบนัสเพิ่ม</p>
+        <div id="topup-packs" class="grid grid-cols-2 gap-2.5"></div>
+        <div class="pt-3 border-t border-[#1e3a8a]/40 space-y-2">
+          <h3 class="text-xs font-bold text-slate-100">⚡ ระบุจำนวนเอง (PromptPay)</h3>
+          <div class="flex gap-2">
+            <input type="number" id="custom-topup" min="20" max="5000" placeholder="20 - 5,000 บาท" class="inp">
+            <button data-act="custom-topup" class="btn-primary px-4 py-2 text-xs shrink-0">เติมเงิน</button>
+          </div>
+          <p class="text-[11px] text-[#7096d1]">* เรต 1:1 ไม่มีโบนัส · การเติมเงินไม่ได้รับแต้ม (แต้มได้จากการใช้บริการจริงเท่านั้น)</p>
         </div>
-    </div>
+      </div>
+      <div class="card p-3.5 space-y-2">
+        <h3 class="text-sm font-bold text-slate-100">📜 ประวัติธุรกรรมของฉัน</h3>
+        <div id="my-tx-list" class="space-y-1.5"></div>
+      </div>
+    </section>
 
-    <!-- Spec Modal -->
-    <div id="spec-modal" class="fixed inset-0 bg-black/60 backdrop-blur-sm hidden items-center justify-center z-50 p-4">
-        <div class="bg-[#0b1329] border border-[#00f0ff]/30 rounded-2xl p-4 max-w-xs w-full space-y-3 animate-pop shadow-xl">
-            <div class="flex justify-between items-center border-b border-[#1e3a8a]/60 pb-2">
-                <h3 id="spec-modal-title" class="text-sm font-bold text-slate-100">🖥️ ข้อมูลสเปกสถานี</h3>
-                <button onclick="closeModal('spec-modal')" class="text-[#7096d1] hover:text-slate-200 text-xl font-bold">&times;</button>
-            </div>
-            <div id="modal-pc-status-badge" class="text-center py-1.5 px-2 rounded-lg text-xs font-bold"></div>
-            
-            <div class="space-y-2 text-[11px]">
-                <div class="bg-[#050b14] p-2 rounded-xl border border-[#1e3a8a]/60">
-                    <span class="text-[#00f0ff] font-semibold block">🎮 GPU (การ์ดจอ)</span>
-                    <span id="spec-gpu" class="text-slate-200">-</span>
-                </div>
-                <div class="bg-[#050b14] p-2 rounded-xl border border-[#1e3a8a]/60">
-                    <span class="text-purple-400 font-semibold block">⚙️ CPU (หน่วยประมวลผล)</span>
-                    <span id="spec-cpu" class="text-slate-200">-</span>
-                </div>
-                <div class="bg-[#050b14] p-2 rounded-xl border border-[#1e3a8a]/60">
-                    <span class="text-blue-400 font-semibold block">🧠 RAM (หน่วยความจำ)</span>
-                    <span id="spec-ram" class="text-slate-200">-</span>
-                </div>
-                <div class="bg-[#050b14] p-2 rounded-xl border border-[#1e3a8a]/60">
-                    <span class="text-emerald-400 font-semibold block">🖥️ Monitor (จอแสดงผล)</span>
-                    <span id="spec-monitor" class="text-slate-200">-</span>
-                </div>
-            </div>
-            <div class="space-y-1.5 pt-1">
-                <button id="modal-select-btn" onclick="" class="w-full bg-gradient-to-r from-[#00f0ff]/80 to-[#3b82f6]/80 py-2 rounded-xl font-bold text-gray-950 text-xs shadow-md">⚡ เลือกจองสถานีนี้</button>
-                <button onclick="closeModal('spec-modal')" class="w-full bg-[#1e3a8a]/30 py-1.5 rounded-xl text-[#7096d1] text-[11px]">ปิดหน้าต่าง</button>
-            </div>
+    <!-- ───── CUSTOMER: SHOP ───── -->
+    <section id="tab-shop" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">🍔 สั่งอาหารและเครื่องดื่ม</h2>
+        <div id="menu-grid" class="grid grid-cols-2 gap-2.5"></div>
+      </div>
+      <div class="card p-3.5 space-y-2.5">
+        <h3 class="text-sm font-bold text-slate-100">🛒 ตะกร้าของฉัน</h3>
+        <div id="cart-list" class="space-y-1.5"></div>
+        <div>
+          <label class="block text-xs text-[#7096d1] mb-1">ส่งไปที่เครื่อง</label>
+          <select id="cart-pc" class="inp"></select>
         </div>
-    </div>
-
-    <!-- Script -->
-    <script>
-        let userCredit = 500;
-        let userPoints = 2; 
-        let currentUser = '';
-        let currentTimeSeconds = 10 * 3600 + 50 * 60; 
-        let generatedLoginOtp = '';
-
-        let pcs = [
-            { id: 1, name: 'PC-01 ⚡', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 4090 24GB', cpu: 'Core i9-14900KS', ram: '64GB DDR5', monitor: 'ASUS 360Hz' } },
-            { id: 2, name: 'PC-02 🌐', maxHp: 7200, timeLeft: 3500, status: 'busy', specs: { gpu: 'RTX 4090 24GB', cpu: 'Core i9-14900KS', ram: '64GB DDR5', monitor: 'ASUS 360Hz' } },
-            { id: 3, name: 'PC-03 💠', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 4080 Super', cpu: 'Ryzen 7 7800X3D', ram: '32GB DDR5', monitor: 'Gigabyte 170Hz' } },
-            { id: 4, name: 'PC-04 🚀', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 4080 Super', cpu: 'Ryzen 7 7800X3D', ram: '32GB DDR5', monitor: 'Gigabyte 170Hz' } },
-            { id: 5, name: 'PC-05 🔌', maxHp: 10800, timeLeft: 4200, status: 'busy', specs: { gpu: 'RTX 4070 Ti 12GB', cpu: 'Core i7-13700K', ram: '32GB DDR4', monitor: 'Acer 144Hz' } },
-            { id: 6, name: 'PC-06 🔋', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 4070 Ti 12GB', cpu: 'Core i7-13700K', ram: '32GB DDR4', monitor: 'Acer 144Hz' } },
-            { id: 7, name: 'PC-07 💫', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 3060 12GB', cpu: 'Core i5-12400F', ram: '16GB DDR4', monitor: 'AOC 144Hz' } },
-            { id: 8, name: 'PC-08 🔥', maxHp: 3600, timeLeft: 0, status: 'available', specs: { gpu: 'RTX 3060 12GB', cpu: 'Core i5-12400F', ram: '16GB DDR4', monitor: 'AOC 144Hz' } },
-        ];
-
-        let activeBookings = [
-            { pcId: 2, username: 'Gamer_Nexus', pcName: 'PC-02 🌐', timeStr: '12:00', targetSeconds: 12 * 3600, packageHours: 2, packagePrice: 100, earnedPoints: 30 }
-        ];
-
-        let gamerProfiles = [
-            { id: 1, author: 'Neon_Rider', game: 'Valorant', style: 'สายซัพพอร์ตสุดเทพ ⚡', bio: 'ยิงแม่น เน้นซัพพอร์ตเพื่อนร่วมทีม ใครสนใจมาจอยกันได้เลย 🌐' },
-            { id: 2, author: 'Cyber_Boss', game: 'Overcooked', style: 'สายแบกแรงค์พุ่ง 🚀', bio: 'ครัวไม่ไหม้ไม่เลิกเล่น! มือไวใจนิ่งมารวมกันตรงนี้ 🍳' },
-            { id: 3, author: 'Matrix_Girl', game: 'Valorant', style: 'สายปาร์ตี้ฮาเฮ 😄', bio: 'เน้นเอ็นเตอร์เทนและเสียงหัวเราะ มาลุยกันยาวๆ จ้า' },
-            { id: 4, author: 'Gamer_Nexus', game: 'Valorant', style: 'สายแบกแรงค์พุ่ง 🚀', bio: 'ทดสอบระบบเครือข่าย นัดเจอในเกมได้เลย!' }
-        ];
-
-        let currentActiveChatBuddy = '';
-
-        document.addEventListener('click', function(e) {
-            const spark = document.createElement('div');
-            spark.className = 'click-effect';
-            spark.style.left = e.clientX + 'px';
-            spark.style.top = e.clientY + 'px';
-            document.body.appendChild(spark);
-            setTimeout(() => {
-                spark.remove();
-            }, 350);
-        });
-
-        // ฟังก์ชันตรวจสอบความถูกต้องของเบอร์โทร (ต้องขึ้นต้นด้วย 0 และยาวครบ 10 หลัก)
-        function isValidThaiPhoneNumber(phone) {
-            const phoneRegex = /^0[0-9]{9}$/;
-            return phoneRegex.test(phone);
-        }
-
-        function validatePhoneInput(input) {
-            // อนุญาตให้พิมพ์เฉพาะตัวเลขและจำกัดไม่เกิน 10 หลัก
-            input.value = input.value.replace(/\D/g, '').slice(0, 10);
-            const errorHint = document.getElementById('phone-error-hint');
-            
-            if (input.value.length > 0 && !isValidThaiPhoneNumber(input.value)) {
-                errorHint.classList.remove('hidden');
-                input.classList.add('border-red-500');
-            } else {
-                errorHint.classList.add('hidden');
-                input.classList.remove('border-red-500');
-            }
-        }
-
-        function switchTab(tabName) {
-            ['home', 'topup', 'shop', 'match', 'queue', 'profile'].forEach(t => {
-                document.getElementById(`tab-${t}`).classList.add('hidden');
-                const navEl = document.getElementById(`nav-${t}`);
-                if (navEl) {
-                    navEl.classList.remove('text-[#00f0ff]');
-                    navEl.classList.add('text-[#7096d1]');
-                }
-            });
-            document.getElementById(`tab-${tabName}`).classList.remove('hidden');
-            const activeNav = document.getElementById(`nav-${tabName}`);
-            if (activeNav) {
-                activeNav.classList.remove('text-[#7096d1]');
-                activeNav.classList.add('text-[#00f0ff]');
-            }
-            if (tabName === 'profile') {
-                renderMyProfilePosts();
-            }
-        }
-
-        function updateWalletUI() {
-            document.getElementById('user-credit').innerText = userCredit;
-            document.getElementById('user-points').innerText = userPoints;
-            document.getElementById('profile-credit-val').innerText = userCredit;
-            document.getElementById('profile-point-val').innerText = userPoints;
-        }
-
-        function formatClock(secondsTotal) {
-            const h = Math.floor(secondsTotal / 3600) % 24;
-            const m = Math.floor((secondsTotal % 3600) / 60);
-            return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`;
-        }
-
-        function formatCountdown(secondsLeft) {
-            if (secondsLeft <= 0) return 'หมดเวลาใช้งาน ⏰';
-            const h = Math.floor(secondsLeft / 3600);
-            const m = Math.floor((secondsLeft % 3600) / 60);
-            const s = secondsLeft % 60;
-            if (h > 0) return `เหลือเวลา: ${h} ชม. ${m} น.`;
-            else if (m > 0) return `เหลือเวลา: ${m} นาที`;
-            else return `เหลือเวลา: ${s} วินาที`;
-        }
-
-        function formatQueueCountdown(secondsLeft) {
-            if (secondsLeft <= 0) return 'ถึงเวลาเชื่อมต่อแล้ว! ⚡';
-            const h = Math.floor(secondsLeft / 3600);
-            const m = Math.floor((secondsLeft % 3600) / 60);
-            const s = secondsLeft % 60;
-            if (h > 0) return `อีก ${h} ชม. ${m} นาที`;
-            else if (m > 0) return `อีก ${m} นาที ${s} วินาที`;
-            else return `อีก ${s} วินาที`;
-        }
-
-        function renderPCGrid() {
-            const grid = document.getElementById('pc-grid');
-            const select = document.getElementById('selected-pc');
-            const currentSelectedValue = select.value;
-
-            grid.innerHTML = '';
-            select.innerHTML = '<option value="">-- เลือกสถานีคอมพิวเตอร์ --</option>';
-
-            let availableCount = 0;
-            pcs.forEach(pc => {
-                if (pc.status === 'available') availableCount++;
-
-                const pcBookings = activeBookings.filter(b => b.pcId === pc.id);
-                let bookingBadgeHtml = pcBookings.length > 0 
-                    ? `<div class="bg-[#1e3a8a]/40 text-[#00f0ff] text-[9px] px-1.5 py-0.5 rounded border border-[#00f0ff]/20 font-medium truncate mt-1">📌 จองแล้ว: ${pcBookings.map(b => b.timeStr).join(', ')} น.</div>`
-                    : `<div class="text-[#7096d1] text-[9px] mt-1">✨ พร้อมเชื่อมต่อ</div>`;
-
-                let hpPercent = pc.status === 'available' ? 100 : Math.max(0, Math.floor((pc.timeLeft / pc.maxHp) * 100));
-                let statusTextHtml = pc.status === 'available' 
-                    ? '<span class="text-[#00f0ff] font-bold">🟢 ว่างพร้อมรบ</span>' 
-                    : `<span class="text-amber-400 font-bold text-[9px]">⏳ ${formatCountdown(pc.timeLeft)}</span>`;
-
-                const card = document.createElement('div');
-                card.className = `p-2.5 rounded-xl border flex flex-col justify-between transition active:scale-95 cursor-pointer ${
-                    pc.status === 'available' ? 'bg-[#050b14] border-[#1e3a8a]/60 hover:border-[#00f0ff]/50' : 'bg-[#070e21] border-[#1e3a8a]/30'
-                }`;
-                card.onclick = () => showPCSpecs(pc.id);
-
-                card.innerHTML = `
-                    <div>
-                        <div class="flex justify-between items-center mb-1">
-                            <span class="font-bold text-[11px] text-slate-100">${pc.name}</span>
-                            <span class="text-[9px] text-[#7096d1]">${pc.specs.gpu.split(' ')[0]}</span>
-                        </div>
-                        <div class="w-full bg-[#070e21] h-2 rounded-full overflow-hidden my-1 border border-[#1e3a8a]/50">
-                            <div class="h-full ${pc.status === 'available' ? 'bg-[#00f0ff]/80' : 'bg-amber-500/80'}" style="width: ${hpPercent}%"></div>
-                        </div>
-                        ${bookingBadgeHtml}
-                    </div>
-                    <div class="mt-2 flex justify-between items-center text-[10px] pt-1 border-t border-[#1e3a8a]/30">
-                        ${statusTextHtml}
-                        <span class="text-[#00f0ff] underline text-[9px]">ดูสเปก</span>
-                    </div>
-                `;
-                grid.appendChild(card);
-                select.innerHTML += `<option value="${pc.id}">${pc.name} (${pc.specs.gpu})</option>`;
-            });
-            document.getElementById('available-count').innerText = availableCount;
-            if (currentSelectedValue) select.value = currentSelectedValue;
-        }
-
-        function showPCSpecs(pcId) {
-            const pc = pcs.find(p => p.id === pcId);
-            if (!pc) return;
-            
-            document.getElementById('spec-modal-title').innerText = `🖥️ สเปก ${pc.name}`;
-            document.getElementById('spec-gpu').innerText = pc.specs.gpu;
-            document.getElementById('spec-cpu').innerText = pc.specs.cpu;
-            document.getElementById('spec-ram').innerText = pc.specs.ram;
-            document.getElementById('spec-monitor').innerText = pc.specs.monitor;
-
-            const statusBadge = document.getElementById('modal-pc-status-badge');
-            const selectBtn = document.getElementById('modal-select-btn');
-
-            if (pc.status === 'available') {
-                statusBadge.className = 'text-center py-1.5 px-2 rounded-lg text-xs font-bold bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/20';
-                statusBadge.innerText = `🟢 สถานะ: ว่างพร้อมเชื่อมต่อ`;
-                selectBtn.onclick = () => { closeModal('spec-modal'); document.getElementById('selected-pc').value = pc.id; switchTab('home'); };
-            } else {
-                statusBadge.className = 'text-center py-1.5 px-2 rounded-lg text-xs font-bold bg-amber-500/10 text-amber-400 border border-amber-500/20';
-                statusBadge.innerText = `⏳ สถานะ: กำลังใช้งาน (${formatCountdown(pc.timeLeft)})`;
-                selectBtn.onclick = () => { closeModal('spec-modal'); document.getElementById('selected-pc').value = pc.id; switchTab('home'); };
-            }
-            openModal('spec-modal');
-        }
-
-        function openModal(id) { 
-            const modal = document.getElementById(id);
-            if(modal) {
-                modal.classList.remove('hidden'); 
-                modal.classList.add('flex'); 
-                modal.style.display = 'flex'; 
-            }
-        }
-
-        function closeModal(id) { 
-            const modal = document.getElementById(id);
-            if(modal) {
-                modal.classList.remove('flex'); 
-                modal.classList.add('hidden'); 
-                modal.style.display = 'none'; 
-            }
-        }
-        function closeSuccessPopup() { closeModal('success-popup'); }
-        
-        function showPopup(title, msg, icon = '⚡') {
-            document.getElementById('success-popup-title').innerText = title;
-            document.getElementById('success-popup-msg').innerText = msg;
-            document.getElementById('popup-icon').innerText = icon;
-            openModal('success-popup');
-        }
-
-        function topUpCredit(creditAmount, priceBaht) {
-            userCredit += creditAmount;
-            userPoints += Math.floor(creditAmount / 10);
-            updateWalletUI();
-            showPopup('เติมเครดิตสำเร็จ!', `⚡ เติมสำเร็จ! ได้รับ ${creditAmount} เครดิต (G) เข้าบัญชีเรียบร้อย`, '💠');
-        }
-
-        function handleCustomTopUp() {
-            const inputEl = document.getElementById('custom-topup-amount');
-            const amount = parseInt(inputEl.value);
-            if (!amount || amount <= 0) {
-                showPopup('กรุณาระบุจำนวนเงิน', 'กรุณากรอกตัวเลขจำนวนเงินให้ถูกต้องก่อนทำรายการ ⚡', '⚠️');
-                return;
-            }
-            topUpCredit(amount, amount);
-            inputEl.value = '';
-        }
-
-        function sendLoginSMSOTP() {
-            const phone = document.getElementById('login-phone').value.trim();
-            
-            // ตรวจสอบความถูกต้องตามหลักเบอร์โทรจริงก่อนกดส่ง SMS
-            if (!isValidThaiPhoneNumber(phone)) {
-                showPopup('เบอร์โทรศัพท์ไม่ถูกต้อง', 'ไม่สามารถส่ง SMS ได้ เนื่องจากเบอร์โทรศัพท์ต้องขึ้นต้นด้วย 0 และมีความยาวครบ 10 หลักตามหลักสากล 📱', '⚠️');
-                return;
-            }
-
-            generatedLoginOtp = Math.floor(100000 + Math.random() * 900000).toString();
-            document.getElementById('login-otp').value = generatedLoginOtp; 
-            showPopup('ส่งรหัส SMS สำเร็จ', `📩 ส่งรหัส OTP ไปที่เบอร์ ${phone} เรียบร้อย!\n(จำลองรหัส OTP คือ: ${generatedLoginOtp})`, '💬');
-        }
-
-        function handleSMSLogin(e) {
-            e.preventDefault();
-            const phone = document.getElementById('login-phone').value.trim();
-            const userOtp = document.getElementById('login-otp').value.trim();
-
-            if (!isValidThaiPhoneNumber(phone)) {
-                showPopup('เบอร์โทรศัพท์ไม่ถูกต้อง', 'เบอร์โทรศัพท์มือถือไม่ถูกต้องตามหลักการใช้งาน กรุณาตรวจสอบอีกครั้ง ⚠️', '⚠️');
-                return;
-            }
-
-            if (userOtp !== generatedLoginOtp) {
-                showPopup('รหัส OTP ไม่ถูกต้อง', 'รหัสยืนยัน SMS (OTP) ไม่ถูกต้อง กรุณาลองใหม่อีกครั้ง ⚠️', '⚠️');
-                return;
-            }
-
-            const generatedUsername = `Cyber_${phone.slice(-4)}`;
-            loginSuccess(generatedUsername, 'เชื่อมต่อเข้าสู่ระบบ CyberZone สำเร็จ ⚡');
-        }
-
-        function loginSuccess(username, msg) {
-            currentUser = username;
-            document.getElementById('username').value = username;
-            document.getElementById('profile-username').innerText = username;
-            const authScreen = document.getElementById('auth-screen');
-            authScreen.style.opacity = '0';
-            setTimeout(() => authScreen.classList.add('hidden'), 300);
-            renderMyProfilePosts();
-            showPopup('ยินดีต้อนรับสู่เครือข่าย', msg, '⚡');
-        }
-
-        function logout() {
-            const authScreen = document.getElementById('auth-screen');
-            authScreen.classList.remove('hidden');
-            authScreen.style.opacity = '1';
-            document.getElementById('login-phone').value = '';
-            document.getElementById('login-otp').value = '';
-            generatedLoginOtp = '';
-            showPopup('ตัดการเชื่อมต่อ', 'ออกจากระบบเรียบร้อยแล้ว 🔌', '🔌');
-        }
-
-        function handleBooking(e) {
-            e.preventDefault();
-            const username = document.getElementById('username').value;
-            const pcId = parseInt(document.getElementById('selected-pc').value);
-            const bookingTimeStr = document.getElementById('booking-time-select').value; 
-            const packageSelect = document.getElementById('package-price');
-            const price = parseInt(packageSelect.value);
-            const hours = parseInt(packageSelect.options[packageSelect.selectedIndex].getAttribute('data-hours'));
-            const earnedPts = hours === 1 ? 15 : (hours === 3 ? 40 : 70);
-
-            if (userCredit < price) { 
-                showPopup('เครดิตไม่พอ', 'เครดิตพลังงานของคุณไม่พอ กรุณาเติมเงินก่อนจองพอร์ต ⚡', '⚠️'); 
-                return; 
-            }
-
-            const isAlreadyBooked = activeBookings.some(b => b.pcId === pcId && b.timeStr === bookingTimeStr);
-            if (isAlreadyBooked) {
-                const pcObj = pcs.find(p => p.id === pcId);
-                document.getElementById('overlap-popup-msg').innerText = `พอร์ต ${pcObj ? pcObj.name : 'นี้'} มีผู้จองรอบเวลา ${bookingTimeStr} น. ไปแล้ว กรุณาเลือกพอร์ตหรือเวลาอื่น!`;
-                openModal('overlap-popup');
-                return;
-            }
-
-            userCredit -= price;
-            userPoints += earnedPts;
-            updateWalletUI();
-
-            const [hPart, mPart] = bookingTimeStr.split(':').map(Number);
-            const targetSecs = hPart * 3600 + mPart * 60;
-            const pc = pcs.find(p => p.id === pcId);
-            
-            activeBookings.push({ pcId: pc.id, username, pcName: pc.name, timeStr: bookingTimeStr, targetSeconds: targetSecs, packageHours: hours, packagePrice: price, earnedPoints: earnedPts });
-            
-            renderActiveBookings();
-            renderPCGrid();
-            document.getElementById('booking-form').reset();
-            document.getElementById('username').value = currentUser;
-
-            showPopup('จองพอร์ตสำเร็จ!', `จอง ${pc.name} สำเร็จ! หัก ${price} G ได้รับ +${earnedPts} Pts ⚡`, '🎉');
-        }
-
-        function orderFood(item, price, pts) {
-            if (userCredit < price) { 
-                showPopup('เครดิตไม่พอ', 'เครดิตไม่พอสั่งเสบียงพลังงาน ⚡', '⚠️'); 
-                return; 
-            }
-            userCredit -= price;
-            userPoints += pts;
-            updateWalletUI();
-            showPopup('สั่งเสบียงสำเร็จ!', `สั่ง ${item} ราคา ${price} G สำเร็จ! รับแต้ม +${pts} Pts 🍔`, '⚡');
-        }
-
-        function handlePostProfile(e) {
-            e.preventDefault();
-            const game = document.getElementById('post-game').value;
-            const style = document.getElementById('post-style').value;
-            const bio = document.getElementById('post-bio').value;
-
-            gamerProfiles.unshift({
-                id: Date.now(),
-                author: currentUser,
-                game: game,
-                style: style,
-                bio: bio
-            });
-
-            renderProfileFeed();
-            renderMyProfilePosts();
-            document.getElementById('post-bio').value = '';
-            showPopup('ส่งสัญญาณสำเร็จ', 'ประกาศหาตี้ของคุณถูกกระจายเข้าสู่เน็ตเวิร์กเรียบร้อยแล้ว ⚡', '📢');
-        }
-
-        function renderProfileFeed() {
-            const filterGame = document.getElementById('filter-game').value;
-            const feedListEl = document.getElementById('profile-feed-list');
-
-            let filtered = gamerProfiles.filter(p => p.author !== currentUser);
-            if (filterGame !== 'All') {
-                filtered = filtered.filter(p => p.game === filterGame);
-            }
-
-            if (filtered.length === 0) {
-                feedListEl.innerHTML = `<p class="text-xs text-[#7096d1] text-center py-4">ยังไม่มีประกาศในเกมนี้ ลองส่งสัญญาณคนแรกเลย! 🌐</p>`;
-                return;
-            }
-
-            feedListEl.innerHTML = filtered.map(p => `
-                <div class="bg-[#050b14] p-3 rounded-xl border border-[#1e3a8a]/60 space-y-1.5 text-xs animate-pop">
-                    <div class="flex justify-between items-center">
-                        <div class="font-bold text-slate-100 flex items-center gap-1.5">
-                            <span>⚡</span> ${p.author}
-                        </div>
-                        <span class="text-[9px] bg-[#1e3a8a]/60 text-[#00f0ff] px-2 py-0.5 rounded-full font-bold border border-[#00f0ff]/20">🎮 ${p.game}</span>
-                    </div>
-                    <div class="text-[10px] text-[#7096d1]">
-                        สไตล์: <span class="font-semibold text-[#00f0ff]">${p.style}</span>
-                    </div>
-                    <div class="bg-[#0b1329] p-2 rounded-xl border border-[#1e3a8a]/50 text-[11px] text-slate-200">
-                        "${p.bio}"
-                    </div>
-                    <div class="flex justify-end pt-1">
-                        <button onclick="chatWithGamer('${p.author}')" class="bg-[#1e3a8a]/60 text-[#00f0ff] px-2.5 py-1 rounded-lg text-[10px] font-bold hover:bg-[#1e3a8a] transition">💬 เชื่อมต่อแชท</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function renderMyProfilePosts() {
-            const myPostsListEl = document.getElementById('my-profile-posts-list');
-            const myPostsCountEl = document.getElementById('my-posts-count');
-
-            const myPosts = gamerProfiles.filter(p => p.author === currentUser);
-            myPostsCountEl.innerText = `${myPosts.length} โพสต์`;
-
-            if (myPosts.length === 0) {
-                myPostsListEl.innerHTML = `<p class="text-[11px] text-[#7096d1] text-center py-4">คุณยังไม่มีประกาศส่วนตัว ไปที่แท็บหาตี้เกมเพื่อส่งสัญญาณกันเลย ⚡</p>`;
-                return;
-            }
-
-            myPostsListEl.innerHTML = myPosts.map(p => `
-                <div class="bg-[#050b14] p-2.5 rounded-xl border border-[#1e3a8a]/60 space-y-1.5 text-xs">
-                    <div class="flex justify-between items-center">
-                        <span class="text-[9px] bg-[#1e3a8a]/60 text-[#00f0ff] px-2.5 py-0.5 rounded-full font-bold border border-[#00f0ff]/20">🎮 ${p.game}</span>
-                        <button onclick="deleteMyPost(${p.id})" class="text-[10px] text-red-400 hover:underline font-semibold">ลบประกาศ 🗑️</button>
-                    </div>
-                    <div class="text-[10px] text-[#7096d1]">
-                        สไตล์: <span class="font-semibold text-[#00f0ff]">${p.style}</span>
-                    </div>
-                    <div class="bg-[#0b1329] p-2 rounded-xl border border-[#1e3a8a]/50 text-[11px] text-slate-200">
-                        "${p.bio}"
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function deleteMyPost(postId) {
-            gamerProfiles = gamerProfiles.filter(p => p.id !== postId);
-            renderProfileFeed();
-            renderMyProfilePosts();
-            showPopup('ลบประกาศสำเร็จ', 'ลบประกาศของคุณออกจากระบบเรียบร้อย ⚡', '🗑️');
-        }
-
-        function chatWithGamer(authorName) {
-            currentActiveChatBuddy = authorName;
-            document.getElementById('chat-buddy-name').innerText = `แชทกับ: ${authorName}`;
-            const chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML = `
-                <div class="text-center text-[10px] text-slate-500 my-1">- เริ่มต้นส่งข้อความหา ${authorName} -</div>
-                <div class="bg-[#1e3a8a]/40 p-2 rounded-xl text-[11px] text-slate-200 max-w-[80%] border border-[#00f0ff]/20">
-                    สวัสดีครับ สนใจจอยตี้เกมกันไหมครับ? ⚡
-                </div>
-            `;
-            openModal('chat-modal');
-        }
-
-        function sendChatMessage() {
-            const inputEl = document.getElementById('chat-input');
-            const text = inputEl.value.trim();
-            if (!text) return;
-
-            const chatMessages = document.getElementById('chat-messages');
-            chatMessages.innerHTML += `
-                <div class="flex justify-end">
-                    <div class="bg-gradient-to-r from-[#00f0ff]/80 to-[#3b82f6]/80 text-gray-950 p-2 rounded-xl text-[11px] max-w-[80%] shadow-md font-medium">
-                        ${text}
-                    </div>
-                </div>
-            `;
-            inputEl.value = '';
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-
-            setTimeout(() => {
-                const replies = [
-                    "ยินดีเลยครับ จัดตี้ลุยกันยาวๆ 🚀",
-                    "ทักมาถูกจังหวะพอดี ลุยกันเลยครับ ⚡",
-                    "เอาเลยครับ กำลังรอสมาชิกพอดี 🌐",
-                    "จัดไปครับเพื่อนร่วมทีม 🎉"
-                ];
-                const randomReply = replies[Math.floor(Math.random() * replies.length)];
-                chatMessages.innerHTML += `
-                    <div class="flex justify-start">
-                        <div class="bg-[#0b1329] text-slate-200 p-2 rounded-xl text-[11px] max-w-[80%] border border-[#1e3a8a]/60">
-                            ${randomReply}
-                        </div>
-                    </div>
-                `;
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 1000);
-        }
-
-        function handleChatKeyPress(e) {
-            if (e.key === 'Enter') {
-                sendChatMessage();
-            }
-        }
-
-        function redeemReward(rewardName, requiredPts) {
-            if (userPoints < requiredPts) {
-                showPopup('แต้มสะสมไม่พอ!', `ต้องการ ${requiredPts} Pts (คุณมี ${userPoints} Pts) เล่นเกมและสั่งเสบียงเพิ่มเพื่อสะสมแต้ม! ⚡`, '⚠️');
-                return;
-            }
-            userPoints -= requiredPts;
-            updateWalletUI();
-            showPopup('แลกรางวัลสำเร็จ!', `🎉 แลกไอเทม "${rewardName}" สำเร็จ! เจ้าหน้าที่กำลังจัดส่งให้ทันที 🎁`, '🎁');
-        }
-
-        function renderActiveBookings() {
-            const container = document.getElementById('active-queue-list');
-            if (activeBookings.length === 0) {
-                container.innerHTML = `<p class="text-xs text-[#7096d1] text-center py-6">ยังไม่มีการจองคิวในระบบขณะนี้ 🌐</p>`;
-                return;
-            }
-
-            container.innerHTML = activeBookings.map(b => {
-                const diffSeconds = b.targetSeconds - currentTimeSeconds;
-                return `
-                    <div class="bg-[#050b14] p-3 rounded-xl border border-[#1e3a8a]/60 space-y-2 text-xs">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <div class="font-bold text-sm text-slate-100">${b.pcName} <span class="text-xs font-normal text-[#7096d1]">(${b.username})</span></div>
-                                <div class="text-[11px] text-[#7096d1] mt-0.5">⏰ รอบเวลา: <strong class="text-[#00f0ff]">${b.timeStr} น.</strong></div>
-                                <div class="text-[10px] text-purple-400 mt-0.5">⚡ แพ็กเกจ: ${b.packageHours} ชม. | รับแต้ม: +${b.earnedPoints} Pts</div>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[10px] text-[#7096d1] block">เริ่มเชื่อมต่อใน</span>
-                                <span class="text-[#00f0ff] font-bold text-xs">${formatQueueCountdown(diffSeconds)}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        setInterval(() => {
-            currentTimeSeconds++;
-            if (currentTimeSeconds >= 86400) currentTimeSeconds = 0; 
-            document.getElementById('current-time-bar').innerText = formatClock(currentTimeSeconds);
-
-            pcs.forEach(pc => {
-                if (pc.status === 'busy' && pc.timeLeft > 0) {
-                    pc.timeLeft--;
-                    if (pc.timeLeft <= 0) { pc.status = 'available'; pc.timeLeft = 0; }
-                }
-            });
-            renderPCGrid();
-            renderActiveBookings();
-        }, 1000);
-
-        document.getElementById('current-time-bar').innerText = formatClock(currentTimeSeconds);
-        renderPCGrid();
-        renderActiveBookings();
-        renderProfileFeed();
-        renderMyProfilePosts();
-        updateWalletUI();
-    </script>
+        <div id="cart-total" class="sub p-2.5 text-[11px] space-y-1"></div>
+        <button data-act="checkout" class="w-full btn-primary py-2.5 text-xs">⚡ ยืนยันสั่งซื้อ</button>
+      </div>
+      <div class="card p-3.5 space-y-2">
+        <h3 class="text-sm font-bold text-slate-100">📦 ออเดอร์ของฉัน</h3>
+        <div id="my-orders" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ───── CUSTOMER: MATCH BOARD ───── -->
+    <section id="tab-match" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">⚡ บอร์ดหาตี้เกมเมอร์</h2>
+        <form id="post-form" class="space-y-2.5 sub p-3">
+          <div class="grid grid-cols-2 gap-2">
+            <div><label class="block text-[11px] text-[#7096d1] mb-1">เกม</label>
+              <select id="post-game" class="inp">
+                <option>Valorant</option><option>Overcooked</option><option>RoV</option><option>Cyberpunk</option>
+              </select></div>
+            <div><label class="block text-[11px] text-[#7096d1] mb-1">สไตล์</label>
+              <select id="post-style" class="inp">
+                <option>สายซัพพอร์ต ⚡</option><option>สายปาร์ตี้ฮาเฮ 😄</option><option>สายแบกแรงค์ 🚀</option><option>สายฟาร์มชิลล์ 🍃</option>
+              </select></div>
+          </div>
+          <div><label class="block text-[11px] text-[#7096d1] mb-1">ข้อความแนะนำตัว</label>
+            <input type="text" id="post-bio" required maxlength="120" placeholder="เช่น หาตี้ลงแรงค์ด่วน!" class="inp"></div>
+          <button type="submit" class="w-full btn-primary py-2 text-xs">📢 ส่งประกาศ</button>
+        </form>
+        <div class="flex justify-between items-center">
+          <h3 class="text-xs font-bold text-slate-100">🌟 ฟีดประกาศ</h3>
+          <select id="filter-game" class="inp w-auto text-[11px] py-1">
+            <option value="All">ทุกเกม</option><option>Valorant</option><option>Overcooked</option><option>RoV</option><option>Cyberpunk</option>
+          </select>
+        </div>
+        <div id="feed-list" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ───── CUSTOMER: MY QUEUE ───── -->
+    <section id="tab-queue" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">⏳ คิวของฉัน</h2>
+        <p class="text-[11px] text-[#7096d1]">เช็กอินได้ตั้งแต่ 15 นาทีก่อนเวลาจอง · ยกเลิกล่วงหน้า &gt;60 นาที คืนเต็มจำนวน</p>
+        <div id="my-queue" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ───── PROFILE (ใช้ร่วมทั้ง 2 บทบาท) ───── -->
+    <section id="tab-profile" class="space-y-3 hidden">
+      <div class="card p-4 text-center space-y-3">
+        <div class="w-16 h-16 bg-[#050b14] rounded-2xl mx-auto flex items-center justify-center text-2xl text-[#00f0ff] border border-[#00f0ff]/20">⚡</div>
+        <div>
+          <h3 id="pf-name" class="font-bold text-slate-100 text-sm">-</h3>
+          <p class="text-[11px] text-[#7096d1]">บทบาท: <span id="pf-role" class="text-[#00f0ff] font-semibold">-</span> · ระดับ: <span id="pf-tier" class="text-purple-400 font-semibold">-</span></p>
+        </div>
+        <div class="flex justify-center gap-4 text-xs sub p-2.5">
+          <div>เครดิต: <span id="pf-credit" class="font-bold text-[#00f0ff]">0</span> G</div>
+          <div>แต้ม: <span id="pf-point" class="font-bold text-purple-400">0</span> Pts</div>
+        </div>
+        <div class="text-[11px] text-[#7096d1]">ยอดใช้จ่ายสะสม: <b id="pf-spent" class="text-slate-200">0</b> G</div>
+        <button data-act="toggle-role" class="w-full sub py-2 text-xs font-medium text-[#00f0ff]">🔄 สลับระบบ (แอดมิน / ลูกค้า)</button>
+      </div>
+      <div id="pf-posts-card" class="card p-3.5 space-y-3">
+        <div class="flex items-center justify-between">
+          <h2 class="text-sm font-bold text-slate-100">📑 ประกาศของฉัน</h2>
+          <span id="my-posts-count" class="badge bg-[#1e3a8a]/60 text-[#00f0ff]">0 โพสต์</span>
+        </div>
+        <div id="my-posts" class="space-y-2"></div>
+      </div>
+      <div id="pf-reward-card" class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">🎁 ร้านแลกของรางวัล</h2>
+        <div id="reward-grid" class="grid grid-cols-2 gap-2.5"></div>
+      </div>
+    </section>
+
+    <!-- ═══════ ADMIN: DASHBOARD ═══════ -->
+    <section id="tab-dash" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <div class="flex justify-between items-center">
+          <h2 class="text-sm font-bold text-slate-100">📊 Dashboard</h2>
+          <button data-act="export-csv" class="btn-ghost px-2.5 py-1 text-[11px] font-bold">⬇️ CSV</button>
+        </div>
+        <div id="kpi-grid" class="grid grid-cols-2 gap-2"></div>
+        <div class="sub p-3 space-y-2">
+          <h3 class="text-xs font-bold text-slate-100">📈 รายได้ 7 วันล่าสุด</h3>
+          <div class="h-40"><canvas id="chart-rev"></canvas></div>
+        </div>
+        <div class="grid grid-cols-2 gap-2">
+          <div class="sub p-2.5 space-y-1">
+            <h4 class="text-[11px] font-bold text-slate-100">⏰ ช่วงเวลาพีค</h4>
+            <div class="h-28"><canvas id="chart-hour"></canvas></div>
+          </div>
+          <div class="sub p-2.5 space-y-1">
+            <h4 class="text-[11px] font-bold text-slate-100">🍕 สัดส่วนรายได้</h4>
+            <div class="h-28"><canvas id="chart-mix"></canvas></div>
+          </div>
+        </div>
+        <div class="sub p-3 space-y-2">
+          <h3 class="text-xs font-bold text-slate-100">🏆 อันดับสูงสุด</h3>
+          <div class="space-y-2 text-xs">
+            <div><b class="text-[#00f0ff]">🍔 เมนูขายดี:</b> <table class="rep mt-1" id="top-menu"></table></div>
+            <div><b class="text-purple-400">👤 สมาชิกใช้จ่ายสูงสุด:</b> <table class="rep mt-1" id="top-user"></table></div>
+            <div><b class="text-amber-400">🖥️️ เครื่องยอดฮิต:</b> <table class="rep mt-1" id="top-pc"></table></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ═══════ ADMIN: OPS BOARD ═══════ -->
+    <section id="tab-ops" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">🍳 บอร์ดจัดการออเดอร์และคิว</h2>
+        <div id="ops-filter" class="flex gap-1.5 overflow-x-auto no-scrollbar pb-1"></div>
+        <div id="ops-orders" class="space-y-2"></div>
+      </div>
+      <div class="card p-3.5 space-y-3">
+        <h3 class="text-sm font-bold text-slate-100">🖥️ จัดการสถานะคิวจอง</h3>
+        <div id="ops-bookings" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ═══════ ADMIN: PCS ═══════ -->
+    <section id="tab-pcs" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">🖥️ จัดการเครื่องในร้าน</h2>
+        <div id="admin-pc-list" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ═══════ ADMIN: MENU & PACKAGES ═══════ -->
+    <section id="tab-menu" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">🍔 จัดการเมนูอาหาร</h2>
+        <div id="admin-menu-list" class="space-y-2"></div>
+      </div>
+      <div class="card p-3.5 space-y-3">
+        <h2 class="text-sm font-bold text-slate-100">📦 จัดการแพ็กเกจจอง</h2>
+        <div id="admin-pkg-list" class="space-y-2"></div>
+      </div>
+    </section>
+
+    <!-- ═══════ ADMIN: USERS ═══════ -->
+    <section id="tab-users" class="space-y-3 hidden">
+      <div class="card p-3.5 space-y-3">
+        <div class="flex justify-between items-center">
+          <h2 class="text-sm font-bold text-slate-100">👥 จัดการสมาชิก</h2>
+          <input type="text" id="user-search" placeholder="ค้นหาชื่อ/เบอร์..." class="inp w-36 py-1 text-xs">
+        </div>
+        <div id="admin-user-list" class="space-y-2"></div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════ BOTTOM NAVIGATION ══════════ -->
+  <nav class="bg-[#0b1329]/95 backdrop-blur-md border-t border-[#1e3a8a]/40 p-2 z-40 shrink-0">
+    <div id="nav-customer" class="flex justify-around items-center"></div>
+    <div id="nav-admin" class="flex justify-around items-center hidden"></div>
+  </nav>
+
+  <!-- TOAST & MODAL ROOT -->
+  <div id="toast-wrap" class="fixed top-12 left-1/2 -translate-x-1/2 z-[9999] pointer-events-none space-y-2 w-[90%] max-w-[380px]"></div>
+  <div id="modal-root" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-[9990] flex items-center justify-center p-4"></div>
+</div>
+
+<script>
+/* ════════════════════════════════════════════════════════════
+   CYBER-ZONE GAMING v2.0 - Core Engine
+   ════════════════════════════════════════════════════════════ */
+
+const CFG = {
+  CHECKIN_EARLY_MIN: 15,
+  CANCEL_FULL_MIN: 60,
+  SLOT_STEP_MIN: 60,
+  START_HOUR: 10,
+  END_HOUR: 24,
+  REFUND_LATE_RATE: 0.5
+};
+
+const NAV_C = [
+  { tab:'home', label:'หน้าแรก', icon:'🖥️' },
+  { tab:'topup', label:'เติมเงิน', icon:'💳' },
+  { tab:'shop', label:'ร้านค้า', icon:'🍔' },
+  { tab:'match', label:'หาตี้', icon:'⚡' },
+  { tab:'queue', label:'คิวจอง', icon:'⏳' },
+  { tab:'profile', label:'โปรไฟล์', icon:'👤' }
+];
+
+const NAV_A = [
+  { tab:'dash', label:'ภาพรวม', icon:'📊' },
+  { tab:'ops', label:'ออเดอร์', icon:'🍳' },
+  { tab:'pcs', label:'ผังเครื่อง', icon:'🖥️' },
+  { tab:'menu', label:'เมนู/แพ็ก', icon:'📦' },
+  { tab:'users', label:'สมาชิก', icon:'👥' },
+  { tab:'profile', label:'โปรไฟล์', icon:'👤' }
+];
+
+let DB = {};
+let S = { phone: '0811111111', role: 'customer' }; // Default to Customer
+let currentTab = 'home';
+let pcDirty = true;
+
+const $ = id => document.getElementById(id);
+const qsa = sel => document.querySelectorAll(sel);
+const esc = str => String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+const money = num => Number(num||0).toLocaleString('th-TH');
+const pad = n => String(n).padStart(2,'0');
+const secToHHMM = sec => `${pad(Math.floor(sec/3600))}:${pad(Math.floor((sec%3600)/60))}`;
+const nowMs = () => Date.now();
+const todayStr = () => { const d = new Date(); return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`; };
+const dStr = d => `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}`;
+const fmtDT = ms => { const d = new Date(ms); return `${pad(d.getDate())}/${pad(d.getMonth()+1)} ${pad(d.getHours())}:${pad(d.getMinutes())}`; };
+const fmtDur = ms => { const s = Math.floor(ms/1000); return `${pad(Math.floor(s/3600))}:${pad(Math.floor((s%3600)/60))}:${pad(s%60)}`; };
+const uid = p => (p||'id') + '_' + Math.random().toString(36).substr(2,9);
+
+/* ───── DATA STORAGE ───── */
+function loadDB(){
+  const local = localStorage.getItem('CYBERZONE_DB_v2');
+  if (local){
+    try { DB = JSON.parse(local); } catch(e){ seedDB(); }
+  } else {
+    seedDB();
+  }
+  const sLocal = localStorage.getItem('CYBERZONE_SESS_v2');
+  if (sLocal){
+    try { S = JSON.parse(sLocal); } catch(e){}
+  }
+}
+
+function save(){ localStorage.setItem('CYBERZONE_DB_v2', JSON.stringify(DB)); }
+function saveSession(){ localStorage.setItem('CYBERZONE_SESS_v2', JSON.stringify(S)); }
+
+function seedDB(){
+  DB = {
+    users: {
+      '0800000001': { phone:'0800000001', name:'Admin Manager', role:'admin', credit:99999, points:9999, totalSpent:0, banned:false },
+      '0811111111': { phone:'0811111111', name:'CyberGamer_01', role:'customer', credit:1500, points:320, totalSpent:2400, banned:false }
+    },
+    pcs: [
+      { id:1, name:'PC-01', zone:'VIP Normal', multiplier:1.0, isActive:true, specs:{ gpu:'RTX 4060', cpu:'i5-13400F', ram:'16GB', monitor:'240Hz' } },
+      { id:2, name:'PC-02', zone:'VIP Normal', multiplier:1.0, isActive:true, specs:{ gpu:'RTX 4060', cpu:'i5-13400F', ram:'16GB', monitor:'240Hz' } },
+      { id:3, name:'PC-03', zone:'PRO Streamer', multiplier:1.2, isActive:true, specs:{ gpu:'RTX 4080 Super', cpu:'i7-14700K', ram:'32GB', monitor:'360Hz OLED' } },
+      { id:4, name:'PC-04', zone:'PRO Streamer', multiplier:1.2, isActive:true, specs:{ gpu:'RTX 4080 Super', cpu:'i7-14700K', ram:'32GB', monitor:'360Hz OLED' } }
+    ],
+    packages: [
+      { id:'p1', hours:1, price:40, points:10 },
+      { id:'p2', hours:3, price:100, points:30 },
+      { id:'p3', hours:5, price:160, points:50 }
+    ],
+    topupPacks: [
+      { id:'tp1', baht:50, credit:50, tag:'' },
+      { id:'tp2', baht:100, credit:110, tag:'+10 G' },
+      { id:'tp3', baht:300, credit:350, tag:'+50 G' },
+      { id:'tp4', baht:500, credit:600, tag:'สุดคุ้ม! +100 G' }
+    ],
+    menu: [
+      { id:'m1', name:'โค้กเย็น 500ml', price:25, points:2, stock:20, emoji:'🥤', isActive:true },
+      { id:'m2', name:'ข้าวผัดกระเพราไข่ดาว', price:65, points:5, stock:15, emoji:'🍳', isActive:true },
+      { id:'m3', name:'เฟรนช์ฟรายส์ทอด', price:45, points:4, stock:12, emoji:'🍟', isActive:true },
+      { id:'m4', name:'ชาเขียวเย็น', price:35, points:3, stock:18, emoji:'🧋', isActive:true }
+    ],
+    rewards: [
+      { id:'r1', name:'ส่วนลด 50 เครดิต', pts:100, emoji:'🎟️' },
+      { id:'r2', name:'เสื้อยืด CyberZone Limited', pts:500, emoji:'👕' }
+    ],
+    bookings: [],
+    foodOrders: [],
+    transactions: [],
+    posts: [
+      { id:'po1', author:'CyberGamer_01', phone:'0811111111', game:'Valorant', style:'สายแบกแรงค์ 🚀', bio:'หาคนเข้าตี้ Valorant แรงค์ Ascendant ขึ้นไปครับ', at:nowMs()-3600000 }
+    ],
+    notifs: []
+  };
+  save();
+}
+
+function me(){
+  if (!DB.users[S.phone]){
+    DB.users[S.phone] = { phone:S.phone, name:S.role==='admin'?'Admin User':'CyberGamer', role:S.role, credit:500, points:50, totalSpent:0, banned:false };
+    save();
+  }
+  return DB.users[S.phone];
+}
+
+/* ───── UI & ROLE CONTROL ───── */
+function updateRoleSwitcherBtn(){
+  const icon = $('role-icon');
+  const label = $('role-label');
+  if (S.role === 'admin'){
+    if (icon) icon.textContent = '⚡';
+    if (label) label.textContent = 'แอดมิน';
+  } else {
+    if (icon) icon.textContent = '👤';
+    if (label) label.textContent = 'ลูกค้า';
+  }
+}
+
+function toggleRole(){
+  if (S.role === 'customer'){
+    S.role = 'admin';
+    S.phone = '0800000001';
+    toast('สลับโหมดเรียบร้อย', 'เข้าสู่ระบบ: ผู้ดูแลระบบ (Admin) ⚡', '⚡', 'ok');
+  } else {
+    S.role = 'customer';
+    S.phone = '0811111111';
+    toast('สลับโหมดเรียบร้อย', 'เข้าสู่ระบบ: ลูกค้า (Customer) 👤', '👤', 'ok');
+  }
+  saveSession();
+  applyRole();
+  renderAll();
+}
+
+function applyRole(){
+  const isAdm = S.role === 'admin';
+  $('nav-customer').classList.toggle('hidden', isAdm);
+  $('nav-admin').classList.toggle('hidden', !isAdm);
+  updateRoleSwitcherBtn();
+  switchTab(isAdm ? 'dash' : 'home');
+}
+
+function buildNav(container, items){
+  container.innerHTML = items.map(i => `
+    <button data-tab="${i.tab}" class="flex flex-col items-center gap-0.5 text-[#7096d1] hover:text-[#00f0ff] transition py-1 px-2">
+      <span class="text-base">${i.icon}</span>
+      <span class="text-[10px] font-medium">${i.label}</span>
+    </button>`).join('');
+}
+
+function switchTab(tabId){
+  currentTab = tabId;
+  qsa('main > section').forEach(sec => sec.classList.add('hidden'));
+  const target = $(`tab-${tabId}`);
+  if (target) target.classList.remove('hidden');
+
+  qsa('nav button').forEach(btn => {
+    const act = btn.dataset.tab === tabId;
+    btn.classList.toggle('text-[#00f0ff]', act);
+    btn.classList.toggle('neon-text', act);
+    btn.classList.toggle('text-[#7096d1]', !act);
+  });
+
+  if (tabId === 'home') renderHome();
+  else if (tabId === 'topup') renderTopup();
+  else if (tabId === 'shop') renderShop();
+  else if (tabId === 'match') renderFeed();
+  else if (tabId === 'queue') renderMyQueue();
+  else if (tabId === 'profile') renderProfile();
+  else if (tabId === 'dash') renderDashboard();
+  else if (tabId === 'ops') renderOps();
+  else if (tabId === 'pcs') renderAdminPCs();
+  else if (tabId === 'menu') renderAdminMenu();
+  else if (tabId === 'users') renderAdminUsers();
+}
+
+function guardAdmin(){
+  if (S.role !== 'admin'){
+    toast('ปฏิเสธการเข้าถึง', 'เฉพาะผู้ดูแลระบบเท่านั้น', '🚫', 'err');
+    switchTab('home');
+    return false;
+  }
+  return true;
+}
+
+function updateWallet(){
+  const u = me();
+  if ($('hdr-credit')) $('hdr-credit').textContent = money(u.credit);
+  if ($('hdr-point')) $('hdr-point').textContent = money(u.points);
+  if ($('pf-credit')) $('pf-credit').textContent = money(u.credit);
+  if ($('pf-point')) $('pf-point').textContent = money(u.points);
+  if ($('pf-spent')) $('pf-spent').textContent = money(u.totalSpent||0);
+}
+
+/* ───── TOAST & NOTIFICATION & MODAL ───── */
+function toast(title, msg, icon='⚡', type='info'){
+  const wrap = $('toast-wrap'); if (!wrap) return;
+  const t = document.createElement('div');
+  const borderCol = { ok:'border-emerald-500/50', err:'border-red-500/50', warn:'border-amber-500/50', info:'border-[#00f0ff]/50' }[type] || 'border-[#00f0ff]/50';
+  t.className = `sub p-3 flex items-center gap-3 border ${borderCol} animate-slide shadow-lg backdrop-blur-md`;
+  t.innerHTML = `
+    <div class="text-2xl shrink-0">${icon}</div>
+    <div class="flex-grow min-w-0">
+      <div class="font-bold text-xs text-slate-100">${esc(title)}</div>
+      ${msg ? `<div class="text-[11px] text-[#7096d1] truncate">${esc(msg)}</div>`:''}
+    </div>`;
+  wrap.appendChild(t);
+  setTimeout(() => { t.style.opacity='0'; setTimeout(()=>t.remove(),300); }, 3000);
+}
+
+function openModal(html){
+  const root = $('modal-root');
+  root.innerHTML = `<div class="card w-full max-w-sm overflow-hidden animate-pop">${html}</div>`;
+  root.classList.remove('hidden');
+}
+
+function closeModal(){ $('modal-root').classList.add('hidden'); }
+
+function confirmBox(title, msg, onConfirm, okText='ยืนยัน'){
+  openModal(`
+    <div class="p-4 space-y-3 text-center">
+      <div class="text-sm font-bold text-slate-100">${esc(title)}</div>
+      <p class="text-xs text-[#7096d1] whitespace-pre-line">${esc(msg)}</p>
+      <div class="flex gap-2 pt-2">
+        <button data-x class="flex-1 btn-ghost py-2 text-xs">ยกเลิก</button>
+        <button id="btn-modal-ok" class="flex-1 btn-primary py-2 text-xs">${esc(okText)}</button>
+      </div>
+    </div>`);
+  $('btn-modal-ok').onclick = () => { closeModal(); onConfirm(); };
+}
+
+document.addEventListener('click', e => {
+  if (e.target.hasAttribute('data-x') || e.target.closest('[data-x]')) closeModal();
+});
+
+function notify({to, type, icon, title, msg, silent=false}){
+  DB.notifs.unshift({ id:uid('nt'), to, type, icon, title, msg, at:nowMs(), read:false });
+  save(); renderNotifBadge();
+  if (!silent && (to === S.phone || (to === 'admin' && S.role === 'admin'))){
+    toast(title, msg, icon, type);
+  }
+}
+
+function renderNotifBadge(){
+  const badge = $('notif-badge'); if (!badge) return;
+  const unread = DB.notifs.filter(n => (n.to === S.phone || (n.to === 'admin' && S.role === 'admin')) && !n.read).length;
+  if (unread > 0){ badge.textContent = unread; badge.classList.remove('hidden'); }
+  else { badge.classList.add('hidden'); }
+}
+
+function openNotifPanel(){
+  const list = DB.notifs.filter(n => n.to === S.phone || (n.to === 'admin' && S.role === 'admin'));
+  list.forEach(n => n.read = true); save(); renderNotifBadge();
+  openModal(`
+    <div class="p-4 space-y-3 max-h-[80vh] overflow-y-auto no-scrollbar">
+      <div class="flex justify-between items-center border-b border-[#1e3a8a]/50 pb-2">
+        <h3 class="text-sm font-bold text-slate-100">🔔 การแจ้งเตือน</h3>
+        <button data-x class="text-[#7096d1] text-xl leading-none">&times;</button>
+      </div>
+      <div class="space-y-2">
+        ${list.length ? list.map(n => `
+          <div class="sub p-2.5 flex items-start gap-2.5 text-xs">
+            <span class="text-lg">${n.icon||'🔔'}</span>
+            <div>
+              <div class="font-bold text-slate-200">${esc(n.title)}</div>
+              <div class="text-[11px] text-[#7096d1]">${esc(n.msg)}</div>
+              <div class="text-[9px] text-slate-500 mt-0.5">${fmtDT(n.at)}</div>
+            </div>
+          </div>`).join('') : '<div class="text-xs text-[#7096d1] text-center py-6">ไม่มีการแจ้งเตือน</div>'}
+      </div>
+    </div>`);
+}
+
+/* ───── WALLET & POINTS HELPER ───── */
+function addTx({phone, type, credit, baht=0, note=''}){
+  DB.transactions.unshift({ id:uid('tx'), phone, type, credit, baht, note, at:nowMs() });
+  save();
+}
+
+function chargeCredit(phone, amount, {type='charge', note=''}){
+  const u = DB.users[phone];
+  if (!u || u.credit < amount) return { ok:false, reason:'เครดิตไม่พอ' };
+  u.credit -= amount;
+  u.totalSpent = (u.totalSpent || 0) + amount;
+  addTx({ phone, type, credit: -amount, note });
+  save(); updateWallet();
+  return { ok:true };
+}
+
+function refundCredit(phone, amount, {note=''}){
+  const u = DB.users[phone]; if (!u) return;
+  u.credit += amount;
+  addTx({ phone, type:'refund', credit: amount, note });
+  save(); updateWallet();
+}
+
+function addPoints(phone, pts, note=''){
+  const u = DB.users[phone]; if (!u || pts <= 0) return;
+  u.points += pts;
+  save(); updateWallet();
+}
+
+function tierOf(u){
+  const s = u.totalSpent || 0;
+  if (s >= 5000) return { name:'DIAMOND VIP 💎', discount:0.15 };
+  if (s >= 2000) return { name:'GOLD VIP 🥇', discount:0.10 };
+  if (s >= 500)  return { name:'SILVER 🥈', discount:0.05 };
+  return { name:'BRONZE 🥉', discount:0.0 };
+}
+
+function refundRate(startTs){
+  const minLeft = (startTs - nowMs()) / 60000;
+  if (minLeft >= CFG.CANCEL_FULL_MIN) return 1.0;
+  if (minLeft > 0) return CFG.REFUND_LATE_RATE;
+  return 0.0;
+}
+
+/* ───── HOME & BOOKING SYSTEM ───── */
+function renderHome(){
+  const u = me();
+  if ($('tier-line')) $('tier-line').innerHTML = `ระดับสมาชิก: <b class="text-[#00f0ff]">${tierOf(u).name}</b>`;
+  if ($('bk-user')) $('bk-user').value = `${u.name} (${u.phone})`;
+
+  renderPCGrid();
+  renderBookingForm();
+}
+
+function renderPCGrid(){
+  const grid = $('pc-grid'); if (!grid) return;
+  const availEl = $('available-count'), totEl = $('total-count');
+  const activePCs = DB.pcs.filter(p => p.isActive);
+  let availCount = 0;
+
+  grid.innerHTML = activePCs.map(pc => {
+    const activeBk = DB.bookings.find(b => b.pcId === pc.id && b.status === 'playing');
+    const isBusy = !!activeBk;
+    if (!isBusy) availCount++;
+
+    return `
+      <div class="sub p-3 flex flex-col justify-between space-y-2 relative border ${isBusy?'border-red-500/40':'border-emerald-500/40'}">
+        <div class="flex justify-between items-start">
+          <div>
+            <div class="font-bold text-xs text-slate-100">${esc(pc.name)}</div>
+            <div class="text-[10px] text-[#7096d1]">${esc(pc.zone)}</div>
+          </div>
+          <span class="badge ${isBusy?'bg-red-500/20 text-red-400 border border-red-500/30':'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'}">
+            ${isBusy ? '🎮 มีผู้ใช้งาน' : '🟢 พร้อมใช้งาน'}
+          </span>
+        </div>
+        ${isBusy ? `
+          <div class="text-[10px] text-amber-300">
+            โดย: ${esc(activeBk.userName)}<br>
+            เวลาเหลือ: <span data-cd-ts="${activeBk.endTs}" data-cd-mode="left">--:--</span>
+          </div>` : `
+          <div class="text-[10px] text-slate-400">สเปก: ${esc(pc.specs.gpu)}</div>`}
+        <button data-act="pc-spec" data-id="${pc.id}" class="btn-ghost py-1 text-[10px] w-full mt-1">🔍 ดูสเปกเครื่อง</button>
+      </div>`;
+  }).join('');
+
+  if (availEl) availEl.textContent = availCount;
+  if (totEl) totEl.textContent = activePCs.length;
+}
+
+function renderBookingForm(){
+  const dateSel = $('bk-date'), pcSel = $('bk-pc'), timeSel = $('bk-time'), pkgSel = $('bk-pkg');
+  if (!dateSel || !pcSel) return;
+
+  dateSel.innerHTML = `<option value="${todayStr()}">วันนี้ (${todayStr()})</option>`;
+  
+  pcSel.innerHTML = DB.pcs.filter(p => p.isActive).map(p => `
+    <option value="${p.id}">${esc(p.name)} (${esc(p.zone)})</option>`).join('');
+
+  timeSel.innerHTML = Array.from({length: CFG.END_HOUR - CFG.START_HOUR}, (_, i) => {
+    const h = CFG.START_HOUR + i;
+    return `<option value="${h*3600}">${pad(h)}:00 น.</option>`;
+  }).join('');
+
+  pkgSel.innerHTML = DB.packages.map(p => `
+    <option value="${p.id}">แพ็กเกจ ${p.hours} ชม. (${money(p.price)} G)</option>`).join('');
+
+  updateQuotePreview();
+}
+
+function quote(){
+  const pcId = Number($('bk-pc')?.value);
+  const pkgId = $('bk-pkg')?.value;
+  const pc = DB.pcs.find(p => p.id === pcId);
+  const pkg = DB.packages.find(p => p.id === pkgId);
+  if (!pc || !pkg) return null;
+
+  const basePrice = pkg.price * pc.multiplier;
+  const discount = basePrice * tierOf(me()).discount;
+  const total = Math.round(basePrice - discount);
+
+  return { pc, pkg, basePrice, discount, total, points: pkg.points };
+}
+
+function updateQuotePreview(){
+  const prev = $('price-preview'); if (!prev) return;
+  const q = quote();
+  if (!q){ prev.innerHTML = ''; return; }
+
+  prev.innerHTML = `
+    <div class="flex justify-between"><span>ราคาพื้นฐาน:</span><span>${money(q.basePrice)} G</span></div>
+    ${q.discount > 0 ? `<div class="flex justify-between text-emerald-400"><span>ส่วนลดสมาชิก:</span><span>-${money(q.discount)} G</span></div>`:''}
+    <div class="flex justify-between font-bold text-xs text-[#00f0ff] pt-1 border-t border-[#1e3a8a]/40">
+      <span>ยอดชำระสุทธิ:</span><span>${money(q.total)} G <span class="text-purple-400 text-[10px]">(+${q.points} Pts)</span></span>
+    </div>`;
+}
+
+$('bk-pc')?.addEventListener('change', updateQuotePreview);
+$('bk-pkg')?.addEventListener('change', updateQuotePreview);
+
+$('booking-form')?.addEventListener('submit', e => {
+  e.preventDefault();
+  const q = quote(); if (!q) return;
+  const u = me();
+  const dateStr = $('bk-date').value;
+  const startSec = Number($('bk-time').value);
+  const startTs = new Date(`${dateStr}T${secToHHMM(startSec)}:00`).getTime();
+  const endTs = startTs + q.pkg.hours * 3600000;
+
+  // Check collision
+  const collision = DB.bookings.some(b => 
+    b.pcId === q.pc.id && ['booked','playing'].includes(b.status) &&
+    !(endTs <= b.startTs || startTs >= b.endTs)
+  );
+
+  if (collision) return toast('เครื่องไม่ว่าง', 'ช่วงเวลาดังกล่าวถูกจองแล้ว กรุณาเลือกเวลาหรือเครื่องอื่น', '⚠️', 'warn');
+
+  const r = chargeCredit(S.phone, q.total, { type:'booking', note:`จอง ${q.pc.name} (${q.pkg.hours} ชม.)`, refId:'pending' });
+  if (!r.ok) return toast('ชำระเงินไม่สำเร็จ', r.reason, '💠', 'err');
+
+  const bk = {
+    id: uid('bk'), code: 'BK' + String(DB.bookings.length + 1001),
+    phone: S.phone, userName: u.name, pcId: q.pc.id, pcName: q.pc.name,
+    dateStr, startSec, hours: q.pkg.hours, startTs, endTs,
+    quote: q, points: q.points, status: 'booked', createdAt: nowMs(),
+    history: [{ at: nowMs(), s:'booked', by: S.phone }]
+  };
+
+  DB.bookings.unshift(bk); save(); pcDirty = true;
+  notify({ to: S.phone, type:'ok', icon:'⚡', title:'จองเครื่องสำเร็จ', msg:`${bk.pcName} วันที่ ${bk.dateStr} เวลา ${secToHHMM(bk.startSec)}` });
+  notify({ to:'admin', type:'info', icon:'🎮', title:'มีการจองใหม่', msg:`${bk.userName} จอง ${bk.pcName}`, silent:true });
+
+  toast('จองเครื่องสำเร็จ!', `หมายเลขออเดอร์ ${bk.code}`, '🎉', 'ok');
+  renderHome();
+});
+
+/* ───── QUEUE & CANCEL ───── */
+function cancelBooking(id){
+  const bk = DB.bookings.find(b => b.id === id); if (!bk) return;
+  if (!['booked'].includes(bk.status)) return toast('ไม่สามารถยกเลิกได้', 'สถานะปัจจุบันไม่อยู่ในเงื่อนไขการยกเลิก', '⚠️', 'warn');
+  const rate = refundRate(bk.startTs);
+  const refAmt = Math.round(bk.quote.total * rate);
+  confirmBox('ยืนยันยกเลิกการจอง', `ยกเลิกล่วงหน้าก่อนเวลาจอง ได้รับคืน ${Math.round(rate*100)}%\nคืนเครดิต: ${money(refAmt)} G`, () => {
+    bk.status = 'cancelled';
+    bk.history.push({at:nowMs(), s:'cancelled', by:S.phone});
+    if (refAmt > 0) refundCredit(bk.phone, refAmt, {note:`ยกเลิกจอง ${bk.code}`});
+    save(); pcDirty = true; renderMyQueue(); updateWallet();
+    toast('ยกเลิกการจองแล้ว', `คืนเครดิต ${money(refAmt)} G เรียบร้อย`, '✅', 'ok');
+  }, 'ยกเลิกการจอง');
+}
+
+function checkIn(id){
+  const bk = DB.bookings.find(b => b.id === id); if (!bk) return;
+  const n = nowMs();
+  if (n < bk.startTs - CFG.CHECKIN_EARLY_MIN*60000)
+    return toast('ยังไม่ถึงเวลาเช็กอิน', `เช็กอินได้ล่วงหน้าไม่เกิน ${CFG.CHECKIN_EARLY_MIN} นาที`, '⏰', 'warn');
+  if (n > bk.endTs) return toast('หมดเวลาจองแล้ว', 'รายการนี้ผ่านเวลาสิ้นสุดแล้ว', '⏳', 'err');
+  bk.status = 'playing';
+  bk.startedAt = n;
+  bk.history.push({at:n, s:'playing', by:S.phone});
+  addPoints(bk.phone, bk.points, `เช็กอินจอง ${bk.pcName}`);
+  save(); pcDirty = true; renderMyQueue(); updateWallet();
+  toast('เช็กอินสำเร็จ', `เริ่มใช้งาน ${bk.pcName} แล้ว ขอให้สนุกกับการเล่นเกม! 🎮`, '🚀', 'ok');
+}
+
+function finishBooking(id){
+  const bk = DB.bookings.find(b => b.id === id); if (!bk) return;
+  confirmBox('คืนเครื่องก่อนเวลา', `ต้องการจบการใช้งาน ${bk.pcName} ตอนนี้ใช่หรือไม่?`, () => {
+    bk.status = 'done';
+    bk.history.push({at:nowMs(), s:'done', by:S.phone});
+    save(); pcDirty = true; renderMyQueue(); renderHome();
+    toast('จบการใช้งานแล้ว', `คืนเครื่อง ${bk.pcName} เรียบร้อย`, '✅', 'ok');
+  }, 'จบการใช้งาน');
+}
+
+function renderMyQueue(){
+  const qEl = $('my-queue'); if (!qEl) return;
+  const mine = DB.bookings.filter(b => b.phone === S.phone || S.role === 'admin')
+    .sort((a,b)=>b.createdAt - a.createdAt);
+  if (!mine.length){
+    qEl.innerHTML = '<div class="text-xs text-[#7096d1] text-center py-6">ไม่มีรายการคิวจองในขณะนี้</div>';
+    return;
+  }
+  qEl.innerHTML = mine.map(b => {
+    const stBadge = {
+      booked:'<span class="badge bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/30">⏳ รอเช็กอิน</span>',
+      playing:'<span class="badge bg-amber-500/20 text-amber-400 border border-amber-500/30 animate-pulse">🎮 กำลังเล่น</span>',
+      done:'<span class="badge bg-slate-700 text-slate-300">✅ เสร็จสิ้น</span>',
+      cancelled:'<span class="badge bg-red-500/20 text-red-400">❌ ยกเลิก</span>',
+      no_show:'<span class="badge bg-red-900/40 text-red-400">🚫 ขาดเช็กอิน</span>'
+    }[b.status] || '';
+    
+    let actions = '';
+    if (b.status === 'booked'){
+      const canIn = nowMs() >= b.startTs - CFG.CHECKIN_EARLY_MIN*60000;
+      actions = `<div class="flex gap-2 mt-2">
+        <button data-act="checkin" data-id="${b.id}" class="flex-1 btn-primary py-1.5 text-xs ${canIn?'':'opacity-50'}">เช็กอิน 🚀</button>
+        <button data-act="cancel-bk" data-id="${b.id}" class="btn-ghost px-3 py-1.5 text-xs text-red-400 border-red-500/30">ยกเลิก</button>
+      </div>`;
+    } else if (b.status === 'playing'){
+      actions = `<div class="mt-2">
+        <button data-act="finish-bk" data-id="${b.id}" class="w-full btn-ghost py-1.5 text-xs text-amber-400 border-amber-500/30">คืนเครื่อง / จบเวลา 🔌</button>
+      </div>`;
+    }
+    
+    return `<div class="sub p-3 space-y-1">
+      <div class="flex justify-between items-center">
+        <span class="font-bold text-xs text-slate-100">${esc(b.code)} · ${esc(b.pcName)}</span>
+        ${stBadge}
+      </div>
+      <div class="text-[11px] text-[#7096d1]">
+        วันที่ ${esc(b.dateStr)} · เวลา ${secToHHMM(b.startSec)}-${secToHHMM(b.startSec+b.hours*3600)} (${b.hours} ชม.)
+      </div>
+      <div class="text-[11px] text-[#7096d1] flex justify-between">
+        <span>ชำระ: ${money(b.quote.total)} G</span>
+        <span>ผู้จอง: ${esc(b.userName)}</span>
+      </div>
+      ${actions}
+    </div>`;
+  }).join('');
+}
+
+/* ───── TOPUP ───── */
+function renderTopup(){
+  const packs = $('topup-packs'); if (!packs) return;
+  packs.innerHTML = DB.topupPacks.map(p => `
+    <div data-act="topup-pack" data-id="${p.id}" class="sub p-3 text-center cursor-pointer hover:border-[#00f0ff]/50 transition relative">
+      ${p.tag ? `<span class="absolute -top-2 right-2 badge bg-[#00f0ff] text-slate-950 font-bold">${p.tag}</span>`:''}
+      <div class="text-base font-bold text-[#00f0ff]">${money(p.credit)} G</div>
+      <div class="text-xs text-slate-300 font-semibold mt-1">${money(p.baht)} บาท</div>
+    </div>`).join('');
+
+  const txList = $('my-tx-list'); if (!txList) return;
+  const myTx = DB.transactions.filter(t => t.phone === S.phone).slice(0, 10);
+  txList.innerHTML = myTx.length ? myTx.map(t => `
+    <div class="sub p-2 flex justify-between items-center text-[11px]">
+      <div>
+        <div class="font-bold text-slate-200">${esc(t.note || t.type)}</div>
+        <div class="text-[10px] text-slate-500">${fmtDT(t.at)}</div>
+      </div>
+      <div class="font-bold ${t.credit>0?'text-emerald-400':(t.credit<0?'text-red-400':'text-purple-400')}">
+        ${t.credit>0?'+':''}${money(t.credit)} G
+      </div>
+    </div>`).join('') : '<div class="text-xs text-[#7096d1] text-center py-4">ไม่มีประวัติรายการ</div>';
+}
+
+function doTopup(baht, credit, label){
+  const u = me();
+  confirmBox('ยืนยันการชำระเงิน', `${label}\nชำระ ${money(baht)} บาท → รับ ${money(credit)} G`, () => {
+    u.credit += credit;
+    addTx({phone:S.phone, type:'topup', credit, baht, note:`เติมเงิน ${money(baht)} บาท`});
+    save(); updateWallet(); renderTopup();
+    notify({to:S.phone, type:'ok', icon:'💠', title:'เติมเครดิตสำเร็จ',
+            msg:`รับ ${money(credit)} G · คงเหลือ ${money(u.credit)} G`});
+    notify({to:'admin', type:'info', icon:'💰', title:'มีการเติมเงิน',
+            msg:`${u.name} เติม ${money(baht)} บาท`, silent:true});
+  }, 'ชำระเงิน');
+}
+
+/* ───── SHOP / FOOD ───── */
+let cart = {};
+
+function renderShop(){
+  const grid = $('menu-grid'); if (!grid) return;
+  grid.innerHTML = DB.menu.filter(m => m.isActive).map(m => `
+    <div class="sub p-2.5 flex flex-col justify-between">
+      <div class="text-center">
+        <div class="text-3xl mb-1">${m.emoji}</div>
+        <div class="font-bold text-xs text-slate-100">${esc(m.name)}</div>
+        <div class="text-[11px] text-[#00f0ff] font-semibold mt-0.5">${money(m.price)} G <span class="text-[9px] text-purple-400">(+${m.points}P)</span></div>
+        <div class="text-[10px] text-[#7096d1] mt-0.5">คงเหลือ: ${m.stock} ชิ้น</div>
+      </div>
+      <button data-act="add-cart" data-id="${m.id}" class="mt-2 btn-ghost py-1 text-xs w-full ${m.stock<=0?'opacity-50':''}" ${m.stock<=0?'disabled':''}>
+        ${m.stock>0?'+ เพิ่มในตะกร้า':'สินค้าหมด'}
+      </button>
+    </div>`).join('');
+
+  const pcSel = $('cart-pc'); if (pcSel){
+    pcSel.innerHTML = '<option value="">-- ไม่ระบุ (รับเคาน์เตอร์) --</option>' +
+      DB.pcs.map(p => `<option value="${p.id}">${esc(p.name)}</option>`).join('');
+  }
+  renderCart();
+  renderMyOrders();
+}
+
+function addToCart(mId){
+  const m = DB.menu.find(x => x.id === mId); if (!m || m.stock <= 0) return;
+  cart[mId] = (cart[mId] || 0) + 1;
+  toast('เพิ่มลงตะกร้า', `${m.name} x${cart[mId]}`, '🛒', 'info');
+  renderCart();
+}
+
+function renderCart(){
+  const cList = $('cart-list'), cTot =$('cart-total'); if (!cList || !cTot) return;
+  const entries = Object.entries(cart);
+  if (!entries.length){
+    cList.innerHTML = '<div class="text-xs text-[#7096d1] text-center py-2">ยังไม่มีสินค้าในตะกร้า</div>';
+    cTot.innerHTML = '<div>รวมทั้งสิ้น: <b class="text-[#00f0ff]">0 G</b></div>';
+    return;
+  }
+  let totG = 0, totP = 0;
+  cList.innerHTML = entries.map(([mId, qty]) => {
+    const m = DB.menu.find(x => x.id === mId); if (!m) return '';
+    const itemG = m.price * qty;
+    totG += itemG; totP += m.points * qty;
+    return `<div class="sub p-2 flex justify-between items-center text-xs">
+      <div>
+        <span class="font-bold text-slate-200">${m.emoji} ${esc(m.name)}</span>
+        <div class="text-[10px] text-[#7096d1]">${money(m.price)} G x ${qty}</div>
+      </div>
+      <div class="flex items-center gap-1.5">
+        <button data-act="mod-cart" data-id="${mId}" data-dir="-1" class="w-6 h-6 btn-ghost rounded text-xs font-bold">-</button>
+        <span class="font-bold text-[#00f0ff]">${qty}</span>
+        <button data-act="mod-cart" data-id="${mId}" data-dir="1" class="w-6 h-6 btn-ghost rounded text-xs font-bold">+</button>
+      </div>
+    </div>`;
+  }).join('');
+  cTot.innerHTML = `<div class="flex justify-between font-bold">
+    <span>รวมทั้งสิ้น (${entries.reduce((a,c)=>a+c[1],0)} รายการ)</span>
+    <span class="text-[#00f0ff]">${money(totG)} G <span class="text-purple-400 text-[10px]">(+${totP} Pts)</span></span>
+  </div>`;
+}
+
+function checkout(){
+  const entries = Object.entries(cart);
+  if (!entries.length) return toast('ตะกร้าว่างเปล่า', 'กรุณาเลือกอาหารหรือเครื่องดื่มก่อนสั่งซื้อ', '🛒', 'warn');
+  let totG = 0, totP = 0;
+  const items = [];
+  for (const [mId, qty] of entries){
+    const m = DB.menu.find(x => x.id === mId);
+    if (!m || m.stock < qty) return toast('สินค้าไม่พอ', `${m ? m.name : 'สินค้า'} มีคงเหลือเพียง ${m ? m.stock : 0} ชิ้น`, '⚠️️', 'err');
+    items.push({ menuId:m.id, name:m.name, qty, price:m.price, points:m.points });
+    totG += m.price * qty;
+    totP += m.points * qty;
+  }
+  const pcId = Number($('cart-pc').value) || null;
+  const pc = DB.pcs.find(p => p.id === pcId);
+  const r = chargeCredit(S.phone, totG, {type:'food', note:`สั่งอาหาร ${items.map(i=>i.name).join(', ')}`, refId:'pending'});
+  if (!r.ok) return toast('สั่งซื้อไม่สำเร็จ', r.reason, '💠', 'err');
+
+  items.forEach(i => {
+    const m = DB.menu.find(x => x.id === i.menuId);
+    if (m) m.stock -= i.qty;
+  });
+
+  const order = {
+    id: uid('fo'), code: 'FO' + String(DB.foodOrders.length + 1001),
+    phone: S.phone, userName: me().name, items, total: totG, points: totP,
+    pcId: pc ? pc.id : null, pcName: pc ? pc.name : 'เคาน์เตอร์',
+    status: 'pending', createdAt: nowMs(), history: [{at:nowMs(), s:'pending'}]
+  };
+  DB.foodOrders.unshift(order);
+  cart = {}; save();
+  addPoints(S.phone, totP, `สั่งอาหาร ${order.code}`);
+  notify({to:'admin', type:'info', icon:'🍳', title:'มีออเดอร์อาหารใหม่', msg:`${order.userName} สั่งอาหาร ${money(totG)} G (${order.pcName})`});
+  toast('สั่งอาหารสำเร็จ', `หมายเลขออเดอร์ ${order.code} · กำลังเตรียมจัดส่ง`, '🍔', 'ok');
+  renderShop(); updateWallet();
+}
+
+function renderMyOrders(){
+  const list = $('my-orders'); if (!list) return;
+  const mine = DB.foodOrders.filter(o => o.phone === S.phone || S.role === 'admin').slice(0, 10);
+  if (!mine.length){ list.innerHTML = '<div class="text-xs text-[#7096d1] text-center py-4">ไม่มีรายการสั่งซื้อ</div>'; return; }
+  list.innerHTML = mine.map(o => {
+    const stBadge = {
+      pending:'<span class="badge bg-amber-500/20 text-amber-400 border border-amber-500/30">⏳ รอดำเนินการ</span>',
+      cooking:'<span class="badge bg-[#00f0ff]/20 text-[#00f0ff] border border-[#00f0ff]/30 animate-pulse">🍳 กำลังทำ</span>',
+      delivered:'<span class="badge bg-emerald-500/20 text-emerald-400">✅ เสิร์ฟแล้ว</span>',
+      cancelled:'<span class="badge bg-red-500/20 text-red-400">❌ ยกเลิก</span>'
+    }[o.status] || '';
+    return `<div class="sub p-2.5 text-xs space-y-1">
+      <div class="flex justify-between items-center">
+        <span class="font-bold text-slate-100">${esc(o.code)} · ${esc(o.pcName)}</span>
+        ${stBadge}
+      </div>
+      <div class="text-[11px] text-[#7096d1]">${o.items.map(i=>`${esc(i.name)} x${i.qty}`).join(', ')}</div>
+      <div class="flex justify-between text-[11px] border-t border-[#1e3a8a]/40 pt-1 mt-1">
+        <span>${fmtDT(o.createdAt)}</span>
+        <span class="font-bold text-[#00f0ff]">${money(o.total)} G</span>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+/* ───── MATCH BOARD ───── */
+function renderFeed(){
+  const feed = $('feed-list'); if (!feed) return;
+  const filter = $('filter-game') ?$('filter-game').value : 'All';
+  const list = DB.posts.filter(p => filter === 'All' || p.game === filter);
+  if (!list.length){ feed.innerHTML = '<div class="text-xs text-[#7096d1] text-center py-6">ยังไม่มีประกาศหาตี้</div>'; return; }
+  feed.innerHTML = list.map(p => `
+    <div class="sub p-3 space-y-1.5 relative">
+      <div class="flex justify-between items-center">
+        <div class="flex items-center gap-1.5">
+          <span class="font-bold text-xs text-slate-100">${esc(p.author)}</span>
+          <span class="badge bg-[#00f0ff]/10 text-[#00f0ff] border border-[#00f0ff]/20">${esc(p.game)}</span>
+        </div>
+        <span class="text-[10px] text-slate-500">${fmtDT(p.at)}</span>
+      </div>
+      <div class="text-xs text-purple-300 font-semibold">${esc(p.style)}</div>
+      <p class="text-xs text-slate-300 break-words">${esc(p.bio)}</p>
+      ${(p.phone === S.phone || S.role === 'admin') ? `
+        <button data-act="del-post" data-id="${p.id}" class="text-[10px] text-red-400 hover:underline pt-1">ลบประกาศ 🗑️</button>` : ''}
+    </div>`).join('');
+}
+
+$('post-form')?.addEventListener('submit', e => {
+  e.preventDefault();
+  const game = $('post-game').value;
+  const style = $('post-style').value;
+  const bio = $('post-bio').value.trim();
+  if (!bio) return;
+  DB.posts.unshift({ id:uid('po'), author:me().name, phone:S.phone, game, style, bio, at:nowMs() });
+  save(); renderFeed(); $('post-form').reset();
+  toast('ส่งประกาศแล้ว', 'ประกาศของคุณแสดงบนบอร์ดแล้ว', '📢', 'ok');
+});
+
+$('filter-game')?.addEventListener('change', renderFeed);
+
+/* ───── PROFILE & REWARDS ───── */
+function renderProfile(){
+  const u = me(); if (!u) return;
+  if ($('pf-name'))$('pf-name').textContent = u.name;
+  if ($('pf-role'))$('pf-role').textContent = u.role === 'admin' ? 'ผู้ดูแลระบบ (Admin)' : 'สมาชิก (Customer)';
+  const t = tierOf(u);
+  if ($('pf-tier'))$('pf-tier').textContent = t.name;
+  updateWallet();
+
+  const myP = DB.posts.filter(p => p.phone === S.phone);
+  if ($('my-posts-count'))$('my-posts-count').textContent = `${myP.length} โพสต์`;
+  const mpEl = $('my-posts');
+  if (mpEl){
+    mpEl.innerHTML = myP.length ? myP.map(p => `
+      <div class="sub p-2 flex justify-between items-center text-xs">
+        <div><b class="text-[#00f0ff]">${esc(p.game)}</b>: ${esc(p.bio)}</div>
+        <button data-act="del-post" data-id="${p.id}" class="text-red-400 text-[11px]">ลบ</button>
+      </div>`).join('') : '<div class="text-xs text-[#7096d1] text-center py-2">ไม่มีประกาศของคุณ</div>';
+  }
+
+  const rGrid = $('reward-grid');
+  if (rGrid){
+    rGrid.innerHTML = DB.rewards.map(r => `
+      <div class="sub p-3 text-center space-y-1">
+        <div class="text-2xl">${r.emoji}</div>
+        <div class="text-xs font-bold text-slate-100">${esc(r.name)}</div>
+        <div class="text-[11px] text-purple-400 font-bold">${r.pts} Pts</div>
+        <button data-act="redeem" data-id="${r.id}" class="w-full btn-primary py-1 text-[11px] mt-1 ${u.points<r.pts?'opacity-50':''}" ${u.points<r.pts?'disabled':''}>
+          ${u.points>=r.pts?'แลกของรางวัล':'แต้มไม่พอ'}
+        </button>
+      </div>`).join('');
+  }
+}
+
+function redeemReward(rId){
+  const r = DB.rewards.find(x => x.id === rId);
+  const u = me();
+  if (!r || !u || u.points < r.pts) return toast('แต้มไม่พอ', `ต้องการ ${r ? r.pts : 0} Pts`, '⚡', 'err');
+  confirmBox('ยืนยันการแลกรางวัล', `ใช้ ${r.pts} Pts แลก "${r.name}"`, () => {
+    u.points -= r.pts;
+    addTx({phone:S.phone, type:'reward', credit:0, note:`แลกของรางวัล ${r.name}`});
+    save(); updateWallet(); renderProfile();
+    toast('แลกรางวัลสำเร็จ', `รับ ${r.name} เรียบร้อย!`, '🎁', 'ok');
+  }, 'แลกรางวัล');
+}
+
+/* ───── ADMIN: DASHBOARD & CHARTS ───── */
+let chartRevInstance = null, chartHourInstance = null, chartMixInstance = null;
+
+function renderDashboard(){
+  if (!guardAdmin()) return;
+  const totalRev = DB.transactions.filter(t => t.credit < 0).reduce((a,c) => a + Math.abs(c.credit), 0);
+  const totalUsers = Object.keys(DB.users).length;
+  const activeBks = DB.bookings.filter(b => ['booked','playing'].includes(b.status)).length;
+  const pendingOrders = DB.foodOrders.filter(o => ['pending','cooking'].includes(o.status)).length;
+
+  const kpi = $('kpi-grid');
+  if (kpi){
+    kpi.innerHTML = `
+      <div class="sub p-3"><div class="text-[10px] text-[#7096d1]">รายได้รวมทั้งหมด</div><div class="text-sm font-bold text-[#00f0ff]">${money(totalRev)} G</div></div>
+      <div class="sub p-3"><div class="text-[10px] text-[#7096d1]">สมาชิกในระบบ</div><div class="text-sm font-bold text-purple-400">${totalUsers} คน</div></div>
+      <div class="sub p-3"><div class="text-[10px] text-[#7096d1]">การจองที่แอ็กทีฟ</div><div class="text-sm font-bold text-amber-400">${activeBks} รายการ</div></div>
+      <div class="sub p-3"><div class="text-[10px] text-[#7096d1]">ออเดอร์ค้างเสิร์ฟ</div><div class="text-sm font-bold text-emerald-400">${pendingOrders} ออเดอร์</div></div>`;
+  }
+
+  const topM = $('top-menu');
+  if (topM){
+    const menuCounts = {};
+    DB.foodOrders.forEach(o => o.items.forEach(i => menuCounts[i.name] = (menuCounts[i.name]||0) + i.qty));
+    const sortedM = Object.entries(menuCounts).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    topM.innerHTML = sortedM.map(([n,q]) => `<tr><td>${esc(n)}</td><td class="text-right font-bold text-[#00f0ff]">${q} ชิ้น</td></tr>`).join('') || '<tr><td>ไม่มีข้อมูล</td></tr>';
+  }
+
+  const topU = $('top-user');
+  if (topU){
+    const sortedU = Object.values(DB.users).sort((a,b)=>(b.totalSpent||0)-(a.totalSpent||0)).slice(0,3);
+    topU.innerHTML = sortedU.map(u => `<tr><td>${esc(u.name)}</td><td class="text-right font-bold text-purple-400">${money(u.totalSpent||0)} G</td></tr>`).join('');
+  }
+
+  const topP = $('top-pc');
+  if (topP){
+    const pcCounts = {};
+    DB.bookings.forEach(b => pcCounts[b.pcName] = (pcCounts[b.pcName]||0) + 1);
+    const sortedP = Object.entries(pcCounts).sort((a,b)=>b[1]-a[1]).slice(0,3);
+    topP.innerHTML = sortedP.map(([n,c]) => `<tr><td>${esc(n)}</td><td class="text-right font-bold text-amber-400">${c} ครั้ง</td></tr>`).join('') || '<tr><td>ไม่มีข้อมูล</td></tr>';
+  }
+
+  renderCharts();
+}
+
+function renderCharts(){
+  if (typeof Chart === 'undefined') return;
+
+  const ctxRev = $('chart-rev')?.getContext('2d');
+  if (ctxRev){
+    if (chartRevInstance) chartRevInstance.destroy();
+    const days = []; const revs = [];
+    for (let i = 6; i >= 0; i--){
+      const d = new Date(); d.setDate(d.getDate()-i);
+      const ds = dStr(d);
+      days.push(ds.slice(5));
+      const sum = DB.transactions.filter(t => dStr(new Date(t.at)) === ds && t.credit < 0)
+        .reduce((a,c) => a + Math.abs(c.credit), 0);
+      revs.push(sum);
+    }
+    chartRevInstance = new Chart(ctxRev, {
+      type: 'line',
+      data: { labels: days, datasets: [{ label: 'รายได้ (G)', data: revs, borderColor: '#00f0ff', backgroundColor: 'rgba(0,240,255,0.1)', fill: true, tension: 0.3 }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+  }
+
+  const ctxHour = $('chart-hour')?.getContext('2d');
+  if (ctxHour){
+    if (chartHourInstance) chartHourInstance.destroy();
+    const hours = Array.from({length:14}, (_,i) => i + 10);
+    const counts = hours.map(h => DB.bookings.filter(b => b.dateStr === todayStr() && Math.floor(b.startSec/3600) === h).length);
+    chartHourInstance = new Chart(ctxHour, {
+      type: 'bar',
+      data: { labels: hours.map(h => `${h}:00`), datasets: [{ label: 'การจอง', data: counts, backgroundColor: '#a855f7' }] },
+      options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+    });
+  }
+
+  const ctxMix = $('chart-mix')?.getContext('2d');
+  if (ctxMix){
+    if (chartMixInstance) chartMixInstance.destroy();
+    const bkTotal = DB.transactions.filter(t=>t.type==='booking').reduce((a,c)=>a+Math.abs(c.credit),0);
+    const fdTotal = DB.transactions.filter(t=>t.type==='food').reduce((a,c)=>a+Math.abs(c.credit),0);
+    chartMixInstance = new Chart(ctxMix, {
+      type: 'doughnut',
+      data: { labels: ['ชั่วโมงเครื่อง', 'อาหาร/เครื่องดื่ม'], datasets: [{ data: [bkTotal || 1, fdTotal || 1], backgroundColor: ['#00f0ff', '#f59e0b'] }] },
+      options: { responsive: true, maintainAspectRatio: false }
+    });
+  }
+}
+
+function exportCSV(){
+  let csv = "Timestamp,Phone,Type,Credit,Baht,Note\n";
+  DB.transactions.forEach(t => {
+    csv += `"${fmtDT(t.at)}","${t.phone}","${t.type}",${t.credit},${t.baht},"${t.note}"\n`;
+  });
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `cyberzone_report_${todayStr()}.csv`;
+  a.click(); URL.revokeObjectURL(url);
+  toast('ส่งออก CSV แล้ว', 'ดาวน์โหลดรายงานเรียบร้อย', '⬇️', 'ok');
+}
+
+/* ───── ADMIN: OPS BOARD ───── */
+let currentOpsFilter = 'all';
+
+function renderOps(){
+  if (!guardAdmin()) return;
+  const filterWrap = $('ops-filter');
+  if (filterWrap){
+    filterWrap.innerHTML = ['all','pending','cooking','delivered'].map(f => `
+      <button data-act="ops-f" data-v="${f}" class="btn-ghost px-2.5 py-1 text-[11px] ${currentOpsFilter===f?'border-[#00f0ff] text-[#00f0ff]':''}">
+        ${{all:'ทั้งหมด',pending:'รอดำเนินการ',cooking:'กำลังทำ',delivered:'เสิร์ฟแล้ว'}[f]}
+      </button>`).join('');
+  }
+
+  const oList = $('ops-orders');
+  if (oList){
+    const filtered = DB.foodOrders.filter(o => currentOpsFilter === 'all' || o.status === currentOpsFilter);
+    if (!filtered.length){ oList.innerHTML = '<div class="text-xs text-[#7096d1] text-center py-4">ไม่มีออเดอร์</div>'; }
+    else {
+      oList.innerHTML = filtered.map(o => `
+        <div class="sub p-3 text-xs space-y-2">
+          <div class="flex justify-between font-bold text-slate-100">
+            <span>${esc(o.code)} · ${esc(o.pcName)} (${esc(o.userName)})</span>
+            <span class="text-[#00f0ff]">${money(o.total)} G</span>
+          </div>
+          <div>${o.items.map(i=>`${esc(i.name)} x${i.qty}`).join(', ')}</div>
+          <div class="flex gap-2 pt-1">
+            <button data-act="upd-order" data-id="${o.id}" data-st="cooking" class="flex-1 btn-ghost py-1 text-[11px] text-amber-400">🍳 ทำอาหาร</button>
+            <button data-act="upd-order" data-id="${o.id}" data-st="delivered" class="flex-1 btn-primary py-1 text-[11px]">✅ เสิร์ฟแล้ว</button>
+          </div>
+        </div>`).join('');
+    }
+  }
+
+  const bList = $('ops-bookings');
+  if (bList){
+    const active = DB.bookings.filter(b => ['booked','playing'].includes(b.status));
+    if (!active.length){ bList.innerHTML = '<div class="text-xs text-[#7096d1] text-center py-4">ไม่มีคิวที่กำลังรอดำเนินการ</div>'; }
+    else {
+      bList.innerHTML = active.map(b => `
+        <div class="sub p-2.5 text-xs space-y-1">
+          <div class="flex justify-between font-bold text-slate-100">
+            <span>${esc(b.code)} · ${esc(b.pcName)}</span>
+            <span class="text-amber-400">${b.status === 'playing' ? '🎮 กำลังเล่น' : '⏳ รอเช็กอิน'}</span>
+          </div>
+          <div class="text-[11px] text-[#7096d1]">${esc(b.userName)} (${b.phone}) · ${secToHHMM(b.startSec)}-${secToHHMM(b.startSec+b.hours*3600)}</div>
+          <div class="flex gap-2 mt-1">
+            ${b.status==='booked'?`<button data-act="checkin" data-id="${b.id}" class="flex-1 btn-primary py-1 text-[11px]">เช็กอินแทน</button>`:''}
+            ${b.status==='playing'?`<button data-act="finish-bk" data-id="${b.id}" class="flex-1 btn-ghost py-1 text-[11px] text-amber-400">จบการใช้</button>`:''}
+          </div>
+        </div>`).join('');
+    }
+  }
+}
+
+function updateOrderStatus(oId, status){
+  const o = DB.foodOrders.find(x => x.id === oId); if (!o) return;
+  o.status = status;
+  o.history.push({at:nowMs(), s:status});
+  save(); renderOps();
+  notify({to:o.phone, type:'info', icon:'🍳', title:'อัปเดตสถานะอาหาร', msg:`ออเดอร์ ${o.code} เปลี่ยนเป็น "${status === 'cooking' ? 'กำลังประกอบอาหาร' : 'จัดเสิร์ฟแล้ว'}"`});
+  toast('อัปเดตสถานะแล้ว', `ออเดอร์ ${o.code} → ${status}`, '✅', 'ok');
+}
+
+/* ───── ADMIN: PCS / MENU / USERS ───── */
+function renderAdminPCs(){
+  if (!guardAdmin()) return;
+  const list = $('admin-pc-list'); if (!list) return;
+  list.innerHTML = DB.pcs.map(p => `
+    <div class="sub p-3 flex justify-between items-center text-xs">
+      <div>
+        <div class="font-bold text-slate-100">${esc(p.name)} <span class="text-[10px] text-[#7096d1]">(${esc(p.zone)} x${p.multiplier})</span></div>
+        <div class="text-[10px] text-[#7096d1]">${esc(p.specs.gpu)} · ${esc(p.specs.cpu)}</div>
+      </div>
+      <div class="flex gap-2">
+        <button data-act="toggle-pc" data-id="${p.id}" class="btn-ghost px-2 py-1 text-[10px] ${p.isActive?'text-emerald-400':'text-red-400'}">
+          ${p.isActive ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+function togglePCActive(id){
+  const pc = DB.pcs.find(p => p.id === id); if (!pc) return;
+  pc.isActive = !pc.isActive; save(); pcDirty = true; renderAdminPCs();
+  toast('อัปเดตสถานะเครื่อง', `${pc.name}: ${pc.isActive ? 'เปิดใช้งาน' : 'ปิดใช้งาน'}`, '🖥️', 'info');
+}
+
+function renderAdminMenu(){
+  if (!guardAdmin()) return;
+  const mList = $('admin-menu-list');
+  if (mList){
+    mList.innerHTML = DB.menu.map(m => `
+      <div class="sub p-2.5 flex justify-between items-center text-xs">
+        <div>
+          <span class="font-bold text-slate-100">${m.emoji} ${esc(m.name)}</span>
+          <div class="text-[10px] text-[#7096d1]">${money(m.price)} G · สต็อก: ${m.stock} ชิ้น</div>
+        </div>
+        <button data-act="toggle-menu" data-id="${m.id}" class="btn-ghost px-2 py-1 text-[10px] ${m.isActive?'text-emerald-400':'text-red-400'}">
+          ${m.isActive ? 'พร้อมขาย' : 'ปิดขาย'}
+        </button>
+      </div>`).join('');
+  }
+
+  const pList = $('admin-pkg-list');
+  if (pList){
+    pList.innerHTML = DB.packages.map(p => `
+      <div class="sub p-2.5 flex justify-between items-center text-xs">
+        <div>
+          <span class="font-bold text-slate-100">แพ็กเกจ ${p.hours} ชม.</span>
+          <div class="text-[10px] text-[#7096d1]">${money(p.price)} G · +${p.points} Pts</div>
+        </div>
+        <span class="badge bg-[#00f0ff]/10 text-[#00f0ff]">ใช้งานอยู่</span>
+      </div>`).join('');
+  }
+}
+
+function renderAdminUsers(){
+  if (!guardAdmin()) return;
+  const list = $('admin-user-list'); if (!list) return;
+  const search = $('user-search') ?$('user-search').value.trim().toLowerCase() : '';
+  const users = Object.values(DB.users).filter(u =>
+    !search || u.name.toLowerCase().includes(search) || u.phone.includes(search));
+  
+  list.innerHTML = users.map(u => `
+    <div class="sub p-3 space-y-2 text-xs">
+      <div class="flex justify-between items-center">
+        <div>
+          <span class="font-bold text-slate-100">${esc(u.name)} (${esc(u.phone)})</span>
+          <span class="badge bg-purple-500/20 text-purple-300 border border-purple-500/30 ml-1">${esc(u.role)}</span>
+        </div>
+        <div class="font-bold text-[#00f0ff]">${money(u.credit)} G</div>
+      </div>
+      <div class="flex gap-2">
+        <button data-act="adj-credit" data-phone="${u.phone}" class="flex-1 btn-ghost py-1 text-[11px] text-[#00f0ff]">+ / - เครดิต</button>
+        <button data-act="toggle-ban" data-phone="${u.phone}" class="btn-ghost px-3 py-1 text-[11px] ${u.banned?'text-red-400 border-red-500':'text-slate-400'}">
+          ${u.banned ? 'ปลดแบน' : 'ระงับบัญชี'}
+        </button>
+      </div>
+    </div>`).join('');
+}
+
+$('user-search')?.addEventListener('input', renderAdminUsers);
+
+function adjustCredit(phone){
+  const u = DB.users[phone]; if (!u) return;
+  const amtStr = prompt(`ปรับเครดิตสำหรับ ${u.name}\nปัจจุบัน: ${money(u.credit)} G\nใส่ตัวเลข (เช่น 100 เพื่อเพิ่ม, -50 เพื่อลด):`);
+  const amt = Number(amtStr);
+  if (!amtStr || Number.isNaN(amt)) return;
+  u.credit = Math.max(0, u.credit + amt);
+  addTx({phone:u.phone, type:'admin_adj', credit:amt, note:`แอดมินปรับเปลี่ยนเครดิต (${amt>0?'+':''}${amt} G)`});
+  save(); renderAdminUsers(); updateWallet();
+  toast('ปรับเครดิตสำเร็จ', `${u.name} คงเหลือ: ${money(u.credit)} G`, '💠', 'ok');
+}
+
+function toggleUserBan(phone){
+  const u = DB.users[phone]; if (!u) return;
+  u.banned = !u.banned; save(); renderAdminUsers();
+  toast('อัปเดตสถานะบัญชี', `${u.name}: ${u.banned ? 'ถูกระงับการใช้งาน' : 'ปลดการระงับบัญชี'}`, '👤', 'info');
+}
+
+function renderAll(){
+  updateRoleSwitcherBtn();
+  updateWallet();
+  renderNotifBadge();
+  switchTab(currentTab);
+}
+
+/* ───── REAL-TIME ENGINE LOOP ───── */
+function engine(){
+  const n = nowMs();
+  if ($('clock-bar')){
+    const d = new Date();
+    $('clock-bar').textContent = `${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
+
+  qsa('[data-cd-ts]').forEach(el => {
+    const ts = Number(el.dataset.cdTs);
+    const mode = el.dataset.cdMode;
+    const diff = ts - n;
+    if (mode === 'left'){
+      el.textContent = diff > 0 ? fmtDur(diff) : 'หมดเวลา';
+    }
+  });
+
+  DB.bookings.forEach(b => {
+    if (b.status === 'booked' && n > b.endTs){
+      b.status = 'no_show';
+      b.history.push({at:n, s:'no_show'});
+      save(); pcDirty = true;
+    } else if (b.status === 'playing' && n > b.endTs){
+      b.status = 'done';
+      b.history.push({at:n, s:'done'});
+      save(); pcDirty = true;
+      notify({to:b.phone, type:'info', icon:'🔌', title:'หมดเวลาการใช้งาน', msg:`เครื่อง ${b.pcName} หมดเวลาแล้ว ขอบคุณที่ใช้บริการ!`});
+    }
+  });
+
+  renderPCGrid();
+}
+
+/* ───── EVENT DELEGATION ───── */
+document.addEventListener('click', e => {
+  const btn = e.target.closest('[data-act], [data-tab]');
+  if (!btn) return;
+  
+  if (btn.dataset.tab){
+    switchTab(btn.dataset.tab);
+    return;
+  }
+
+  const act = btn.dataset.act;
+  if (act === 'toggle-role') toggleRole();
+  else if (act === 'open-notif') openNotifPanel();
+  else if (act === 'pc-spec') showPcSpec(Number(btn.dataset.id));
+  else if (act === 'checkin') checkIn(btn.dataset.id);
+  else if (act === 'cancel-bk') cancelBooking(btn.dataset.id);
+  else if (act === 'finish-bk') finishBooking(btn.dataset.id);
+  else if (act === 'topup-pack'){
+    const p = DB.topupPacks.find(x => x.id === btn.dataset.id);
+    if (p) doTopup(p.baht, p.credit, `แพ็กเกจ ${money(p.credit)} G`);
+  }
+  else if (act === 'custom-topup'){
+    const val = Number($('custom-topup').value);
+    if (!val || val < 20 || val > 5000) return toast('ระบุยอดเงินไม่ถูกต้อง', 'เติมได้ตั้งแต่ 20 - 5,000 บาท', '⚠️', 'warn');
+    doTopup(val, val, `เติมเงิน custom ${money(val)} บาท`);
+    $('custom-topup').value = '';
+  }
+  else if (act === 'add-cart') addToCart(btn.dataset.id);
+  else if (act === 'mod-cart'){
+    const mId = btn.dataset.id;
+    const dir = Number(btn.dataset.dir);
+    if (cart[mId]){
+      cart[mId] += dir;
+      if (cart[mId] <= 0) delete cart[mId];
+      renderCart();
+    }
+  }
+  else if (act === 'checkout') checkout();
+  else if (act === 'del-post'){
+    confirmBox('ลบประกาศ', 'ต้องการลบประกาศนี้หรือไม่?', () => {
+      DB.posts = DB.posts.filter(p => p.id !== btn.dataset.id);
+      save(); renderFeed(); renderProfile();
+      toast('ลบประกาศเรียบร้อย', '', '🗑️', 'ok');
+    });
+  }
+  else if (act === 'redeem') redeemReward(btn.dataset.id);
+  else if (act === 'export-csv') exportCSV();
+  else if (act === 'ops-f'){
+    currentOpsFilter = btn.dataset.v;
+    renderOps();
+  }
+  else if (act === 'upd-order') updateOrderStatus(btn.dataset.id, btn.dataset.st);
+  else if (act === 'toggle-pc') togglePCActive(Number(btn.dataset.id));
+  else if (act === 'toggle-menu'){
+    const m = DB.menu.find(x => x.id === btn.dataset.id);
+    if (m){ m.isActive = !m.isActive; save(); renderAdminMenu(); }
+  }
+  else if (act === 'adj-credit') adjustCredit(btn.dataset.phone);
+  else if (act === 'toggle-ban') toggleUserBan(btn.dataset.phone);
+});
+
+function showPcSpec(pcId){
+  const pc = DB.pcs.find(p => p.id === pcId); if (!pc) return;
+  openModal(`
+    <div class="p-4 space-y-3">
+      <div class="flex justify-between items-center border-b border-[#1e3a8a]/50 pb-2">
+        <h3 class="text-sm font-bold text-slate-100">${esc(pc.name)} (${esc(pc.zone)})</h3>
+        <button data-x class="text-[#7096d1] text-xl leading-none">&times;</button>
+      </div>
+      <div class="sub p-3 text-xs space-y-1.5">
+        <div>🎮 <b class="text-[#00f0ff]">GPU:</b> ${esc(pc.specs.gpu)}</div>
+        <div>🧠 <b class="text-[#00f0ff]">CPU:</b> ${esc(pc.specs.cpu)}</div>
+        <div>💾 <b class="text-[#00f0ff]">RAM:</b> ${esc(pc.specs.ram)}</div>
+        <div>🖥️ <b class="text-[#00f0ff]">หน้าจอ:</b> ${esc(pc.specs.monitor)}</div>
+        <div>⚡ <b class="text-[#00f0ff]">ตัวคูณราคา:</b> x${pc.multiplier}</div>
+      </div>
+      <button data-x class="w-full btn-ghost py-2 text-xs">ปิด</button>
+    </div>`);
+}
+
+/* ───── INITIALIZATION ───── */
+document.addEventListener('DOMContentLoaded', () => {
+  loadDB();
+  buildNav($('nav-customer'), NAV_C);
+  buildNav($('nav-admin'), NAV_A);
+
+  if (!S || !S.phone){
+    S = { phone: '0811111111', role: 'customer' };
+    saveSession();
+  }
+
+  applyRole();
+  renderAll();
+
+  setInterval(engine, 1000);
+  engine();
+});
+</script>
 </body>
 </html>
