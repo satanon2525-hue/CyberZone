@@ -276,7 +276,7 @@
           <div class="space-y-2 text-xs">
             <div><b class="text-[#00f0ff]">🍔 เมนูขายดี:</b> <table class="rep mt-1" id="top-menu"></table></div>
             <div><b class="text-purple-400">👤 สมาชิกใช้จ่ายสูงสุด:</b> <table class="rep mt-1" id="top-user"></table></div>
-            <div><b class="text-amber-400">🖥️️ เครื่องยอดฮิต:</b> <table class="rep mt-1" id="top-pc"></table></div>
+            <div><b class="text-amber-400">🖥 เครื่องยอดฮิต:</b> <table class="rep mt-1" id="top-pc"></table></div>
           </div>
         </div>
       </div>
@@ -912,16 +912,77 @@ function renderTopup(){
 }
 
 function doTopup(baht, credit, label){
-  const u = me();
-  confirmBox('ยืนยันการชำระเงิน', `${label}\nชำระ ${money(baht)} บาท → รับ ${money(credit)} G`, () => {
-    u.credit += credit;
-    addTx({phone:S.phone, type:'topup', credit, baht, note:`เติมเงิน ${money(baht)} บาท`});
-    save(); updateWallet(); renderTopup();
-    notify({to:S.phone, type:'ok', icon:'💠', title:'เติมเครดิตสำเร็จ',
-            msg:`รับ ${money(credit)} G · คงเหลือ ${money(u.credit)} G`});
-    notify({to:'admin', type:'info', icon:'💰', title:'มีการเติมเงิน',
-            msg:`${u.name} เติม ${money(baht)} บาท`, silent:true});
-  }, 'ชำระเงิน');
+  openModal(`
+    <div class="p-4 space-y-3 text-center">
+      <div class="flex justify-between items-center border-b border-[#1e3a8a]/50 pb-2">
+        <h3 class="text-sm font-bold text-slate-100">💳 สแกน QR Code พร้อมเพย์</h3>
+        <button data-x class="text-[#7096d1] text-xl leading-none">&times;</button>
+      </div>
+      
+      <div id="qr-step-pay" class="space-y-3">
+        <div class="bg-white p-3 rounded-xl inline-block shadow-lg border border-slate-200">
+          <div class="bg-[#003B71] text-white py-1 px-3 rounded-t text-[10px] font-bold mb-2 tracking-wider flex items-center justify-center gap-1">
+            <span>PROMPTPAY พร้อมเพย์</span>
+          </div>
+          <svg width="150" height="150" viewBox="0 0 100 100" class="mx-auto">
+            <path d="M0 0h30v30H0zM10 10h10v10H10zM70 0h30v30H70zM80 10h10v10H80zM0 70h30v30H0zM10 80h10v10H10z" fill="#000"/>
+            <path d="M35 5h10v10H35zM50 5h15v5H50zM35 20h20v10H35zM5 35h10v20H5zM20 35h10v10H20zM35 35h10v10H35zM50 35h10v20H50zM65 35h15v10H65zM85 35h10v10H85zM5 60h20v5H5zM35 50h10v15H35zM65 50h25v10H65zM35 70h10v10H35zM50 65h15v15H50zM70 70h10v10H70zM85 70h10v25H85zM35 85h25v10H35zM65 85h15v10H65z" fill="#000"/>
+            <rect x="40" y="40" width="20" height="20" rx="3" fill="#fff"/>
+            <rect x="43" y="43" width="14" height="14" rx="2" fill="#003B71"/>
+          </svg>
+          <div class="text-[10px] text-slate-800 mt-1 font-bold">CYBER-ZONE GAMING</div>
+          <div class="text-[9px] text-slate-500">พร้อมเพย์: 081-111-1111</div>
+        </div>
+
+        <div class="sub p-2.5 text-xs space-y-1 text-left">
+          <div class="text-[#7096d1] flex justify-between"><span>รายการ:</span> <span class="text-slate-200 font-semibold">${esc(label)}</span></div>
+          <div class="text-[#7096d1] flex justify-between"><span>จำนวนเงิน:</span> <span class="text-[#00f0ff] font-bold">${money(baht)} บาท</span></div>
+          <div class="text-[#7096d1] flex justify-between"><span>เครดิตที่จะได้รับ:</span> <span class="text-emerald-400 font-bold">+${money(credit)} G</span></div>
+        </div>
+
+        <div class="flex gap-2 pt-1">
+          <button data-x class="flex-1 btn-ghost py-2 text-xs">ยกเลิก</button>
+          <button id="btn-confirm-pay" class="flex-1 btn-primary py-2 text-xs flex items-center justify-center gap-1">
+            <span>📱 จำลองสแกนจ่ายเงิน</span>
+          </button>
+        </div>
+      </div>
+
+      <div id="qr-step-success" class="hidden space-y-3 py-4">
+        <div class="w-16 h-16 bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 rounded-full flex items-center justify-center text-3xl mx-auto animate-pop">
+          ✓
+        </div>
+        <div>
+          <div class="font-bold text-sm text-slate-100">สถานะ: เติมเงินเสร็จสิ้น!</div>
+          <div class="text-xs text-[#7096d1] mt-1">ชำระเงินเรียบร้อยแล้ว ได้รับ <b class="text-[#00f0ff]">${money(credit)} G</b></div>
+        </div>
+        <button data-x class="w-full btn-primary py-2 text-xs mt-2">ตกลง</button>
+      </div>
+    </div>
+  `);
+
+  const btnPay = $('btn-confirm-pay');
+  if (btnPay) {
+    btnPay.onclick = () => {
+      btnPay.disabled = true;
+      btnPay.innerHTML = '⏳ กำลังตรวจสอบการชำระเงิน...';
+      setTimeout(() => {
+        const u = me();
+        u.credit += credit;
+        addTx({phone:S.phone, type:'topup', credit, baht, note:`เติมเงิน ${money(baht)} บาท`});
+        save(); updateWallet(); renderTopup();
+        notify({to:S.phone, type:'ok', icon:'💠', title:'เติมเครดิตสำเร็จ',
+                msg:`รับ ${money(credit)} G · คงเหลือ ${money(u.credit)} G`});
+        notify({to:'admin', type:'info', icon:'💰', title:'มีการเติมเงิน',
+                msg:`${u.name} เติม ${money(baht)} บาท`, silent:true});
+
+        const payStep = $('qr-step-pay');
+        const succStep = $('qr-step-success');
+        if (payStep) payStep.classList.add('hidden');
+        if (succStep) succStep.classList.remove('hidden');
+      }, 1000);
+    };
+  }
 }
 
 /* ───── SHOP / FOOD ───── */
@@ -995,7 +1056,7 @@ function checkout(){
   const items = [];
   for (const [mId, qty] of entries){
     const m = DB.menu.find(x => x.id === mId);
-    if (!m || m.stock < qty) return toast('สินค้าไม่พอ', `${m ? m.name : 'สินค้า'} มีคงเหลือเพียง ${m ? m.stock : 0} ชิ้น`, '⚠️️', 'err');
+    if (!m || m.stock < qty) return toast('สินค้าไม่พอ', `${m ? m.name : 'สินค้า'} มีคงเหลือเพียง ${m ? m.stock : 0} ชิ้น`, '⚠', 'err');
     items.push({ menuId:m.id, name:m.name, qty, price:m.price, points:m.points });
     totG += m.price * qty;
     totP += m.points * qty;
